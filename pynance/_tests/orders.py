@@ -13,10 +13,33 @@ class OrdersTest(TestCase):
             "https://testnet.binance.vision"
         )
 
-        self.data = self.pynance.orders.open_orders('LTCBTC')
+        self.data = self.pynance.orders.open('LTCBTC')
     
     def test_is_success(self):
         self.assertTrue(self.data.isSucces)
     
     def test_status_code(self):
         self.assertEqual(self.data.statuscode, 200)
+    
+    def test_create_order_buy_stop_limit(self):
+        """Doesnt work in the testenvironment therefor we test on None"""
+        data = self.pynance.orders.create('BNBBTC', 1000, False, 5, test=True)
+        self.assertEqual(data, None)
+
+    def test_create_order_sell_stop_limit(self):
+        """Doesnt work in the testenvironment therefor we test on None"""
+        data = self.pynance.orders.create('BNBBTC', 1000, True, 5, test=True)
+        self.assertEqual(data, None)
+
+
+    def test_create_order_buy(self):
+        """Doesnt work in the testenvironment therefor we test on None"""
+        data = self.pynance.orders.create('BNBBTC', 1000.0, True, test=True)
+        self.assertEqual(data.statuscode, 200)
+        self.assertTrue(data.isSucces)
+
+    def test_create_order_sell(self):
+        """Doesnt work in the testenvironment therefor we test on None"""
+        data = self.pynance.orders.create('BNBBTC', 1000.0, False, test=True)
+        self.assertEqual(data.statuscode, 200)
+        self.assertTrue(data.isSucces)

@@ -136,7 +136,7 @@ class Core(object):
         return None
 
     def get(self, endpoint, signed=False, **kwargs):
-        """Executes an get request with the generic self._request method.
+        """Executes a get request with the generic self._request method.
 
         Args:
             endpoint (string): The endpoint to talk to
@@ -150,3 +150,19 @@ class Core(object):
             )
         """
         return self._request('get', endpoint, signed, **kwargs)
+    
+    def post(self, endpoint, signed=False, **kwargs):
+        """Executes a post request with the generic self._request method.
+
+        Args:
+            endpoint (string): The endpoint to talk to
+            signed (bool, optional): Signs the request with the authentication information provided. Defaults to False.
+
+        Example:
+            client.post(
+                f'{client.endpoint}/api/v3/order', 
+                signed=False, 
+                data={"symbol": "LTC", "quantity": "1"}
+            )
+        """
+        return self._request('post', endpoint, signed, **kwargs)
