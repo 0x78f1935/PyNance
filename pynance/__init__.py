@@ -2,6 +2,8 @@ from pynance.core import Core
 from pynance.wallet import Wallet
 from pynance.price import Price
 from pynance.orders import Orders
+from datetime import datetime
+
 
 class PyNance(Core):
     def __init__(self, api_key, api_secret, endpoint="https://www.binance.com", app=None):
