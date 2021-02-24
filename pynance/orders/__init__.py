@@ -1,19 +1,14 @@
 class Orders(object):
     def __init__(self, client):
-        super().__init__()
         self.client = client
     
-    def open_orders(self, **params):
-        """[summary]
+    def open_orders(self, asset=None):
+        """Retrieves a collection of all open orders
 
-        :param symbol: optional
-        :type symbol: str
-        :param recvWindow: the number of milliseconds the request is valid for
-        :type recvWindow: int
-
-        Returns:
-            [list]: 
+        Example
+            client.orders.open_orders() # or
+            client.orders.open_orders('LTCBTC')
         """
-        data = self.client.get(f'{self.client.endpoint}/api/v3/openOrders', signed=True, data=params)
-        if data.isSucces: return data.json
-        return []
+        if asset is None: _filter = {}
+        else: _filter = {'symbol': asset}
+        return self.client.get(f'{self.client.endpoint}/api/v3/openOrders', signed=True, data=_filter)

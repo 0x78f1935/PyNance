@@ -1,6 +1,5 @@
 class Wallet(object):
     def __init__(self, client):
-        super().__init__()
         self.client = client
 
     def balance(self, **params):
