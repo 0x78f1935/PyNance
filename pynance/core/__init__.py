@@ -166,3 +166,19 @@ class Core(object):
             )
         """
         return self._request('post', endpoint, signed, **kwargs)
+
+    def delete(self, endpoint, signed=False, **kwargs):
+        """Executes a delete request with the generic self._request method.
+
+        Args:
+            endpoint (string): The endpoint to talk to
+            signed (bool, optional): Signs the request with the authentication information provided. Defaults to False.
+
+        Example:
+            client.delete(
+                f'{client.endpoint}/api/v3/order', 
+                signed=False, 
+                data={"symbol": "LTC", "origClientOrderId": "1"}
+            )
+        """
+        return self._request('delete', endpoint, signed, **kwargs)
