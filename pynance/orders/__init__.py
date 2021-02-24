@@ -35,6 +35,9 @@ class Orders(object):
 
         Raises:
             BinanceException: Happens when asset or quantity is not provided
+        
+        Example
+            client.orders.create('BTCUSDT', '1000', False, 5.22, test=True)
 
         NOTE: The error `{'code': -1013, 'msg': 'Filter failure: LOT_SIZE'}` indicates that the precision of the quantity is incorrect.
         """

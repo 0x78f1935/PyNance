@@ -30,3 +30,18 @@ class PyNance(Core):
             )
             else: return str(datetime.utcfromtimestamp(response.json['serverTime']/1000))
         else: return str(response.json['serverTime'])
+
+    def exchange_info(self, asset=None):
+        """Get information about the exchange or about a certian asset
+
+        Args:
+            asset (string, optional): A trade currency. Defaults to None.
+                                      If None returns info about the exchange and all the coins
+                                      If provided it will return only info about the coin.
+        """
+        if asset is None: return self.get(f'{self.endpoint}/api/v3/exchangeInfo', signed=False)
+        else:
+            data = self.get(f'{self.endpoint}/api/v3/exchangeInfo', signed=False)
+            coin = [i for i in data.json['symbols'] if i['symbol'] == asset]
+            if coin: return coin.pop(0)
+            else: return []

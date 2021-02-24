@@ -7,7 +7,7 @@ Inspired by https://www.youtube.com/watch?v=qk4gZrBR9CU
 
 You can run unittests by running
 
-    python -m unittest discover
+    python -m unittest
 
 # BUILDING
 
