@@ -8,3 +8,9 @@ Inspired by https://www.youtube.com/watch?v=qk4gZrBR9CU
 You can run unittests by running
 
     python -m unittest discover
+
+# BUILDING
+
+You need to build a whl package.
+
+    python -m build
