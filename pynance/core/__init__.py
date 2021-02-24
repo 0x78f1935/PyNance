@@ -125,6 +125,8 @@ class Core(object):
             )
         elif self.response.status_code == 200:
             return self._objectify()
+        elif self.response.status_code == 404:
+            BinanceAPIException('Page not found', self.response)
         else:
             print(self.response.json()) # I would like to know what the payload looks like
             BinanceAPIException('Unknown error', self.response)
