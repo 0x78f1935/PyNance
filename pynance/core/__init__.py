@@ -129,6 +129,7 @@ class Core(object):
             BinanceAPIException('Page not found', self.response)
         elif self.response.status_code == 503:
             BinanceAPIException("Binance under mainitainence, service unavailable", self.response)
+            return {"msg": "Binance under mainitainence, service unavailable", "error": True}
         else:
             print(self.response.json()) # I would like to know what the payload looks like
             BinanceAPIException('Unknown error', self.response)
