@@ -1,3 +1,5 @@
+[![Build Status](https://www.travis-ci.com/0x78f1935/PyNance.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance)
+
 # binance
 ## Binance Account
 
