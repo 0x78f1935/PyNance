@@ -15,4 +15,4 @@ install:
 
 script:
   - python -m unittest
-  - python -m build
+  - build
