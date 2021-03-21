@@ -44,7 +44,7 @@ class Price(object):
                 Represents the symbol
         
             timeframe : str
-                Has to be one of the following: [1m, 3m, 5m, 15m, 30m, 1H, 2H, 4H, 6H, 8H, 12H, 1D, 3D, 1W, 1M]
+                Has to be one of the following: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']
                 Default: 1m
 
             total_candles: int
@@ -63,8 +63,8 @@ class Price(object):
             client.price.average('LTCBTC')
         """
         if timeframe is None: timeframe = "1m"
-        if timeframe not in ["1m", "3m", "5m", "15m", "30m", "1H", "2H", "4H", "6H", "8H", "12H", "1D", "3D", "1W", "1M"]: 
-            raise BinanceAPIException("Timeframe is unknown, use one of the following timeframes: [1m, 3m, 5m, 15m, 30m, 1H, 2H, 4H, 6H, 8H, 12H, 1D, 3D, 1W, 1M]")
+        if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
+            raise BinanceAPIException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
         data = [{
             "open time": i[0],
             "open": i[1],
