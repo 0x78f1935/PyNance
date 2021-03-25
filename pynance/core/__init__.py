@@ -113,26 +113,26 @@ class Core(object):
         """Checks what status code we retrieved from the response of our request and act accordingly to it"""
         if self.response.status_code == 429:
             print(self.response.json())  # I would like to know what the payload looks like
-            BinanceAPIException(
+            raise BinanceAPIException(
                 'You have been rate limited, stop making requests or your account might get banned', 
                 self.response
             )
         elif self.response.status_code == 418:
             print(self.response.json()) # I would like to know what the payload looks like
-            BinanceAPIException(
+            raise BinanceAPIException(
                 'You have been temporarly banned, You made to many requests', 
                 self.response
             )
         elif self.response.status_code == 200:
             return self._objectify()
         elif self.response.status_code == 404:
-            BinanceAPIException('Page not found', self.response)
+            raise BinanceAPIException('Page not found', self.response)
         elif self.response.status_code == 503:
-            BinanceAPIException("Binance under mainitainence, service unavailable", self.response)
+            print(BinanceAPIException("Binance under mainitainence, service unavailable", self.response))
             return {"msg": "Binance under mainitainence, service unavailable", "error": True}
         else:
             print(self.response.json()) # I would like to know what the payload looks like
-            BinanceAPIException('Unknown error', self.response)
+            raise BinanceAPIException('Unknown error', self.response)
     
     def _objectify(self):
         if self.response: return Response(self.response)
