@@ -1,5 +1,6 @@
 from pynance.core.exceptions import BinanceAPIException
 from statistics import mean
+import warnings
 
 class Price(object):
     def __init__(self, client):
@@ -16,6 +17,7 @@ class Price(object):
             client.price.fees() # or
             client.price.fees('LTCBTC')
         """
+        warnings.warn("Binance will delist all WAPI endpoints from the Binance API at 2021-08-01 2:00 AM (UTC).")
         if asset is not None: _filter = {"symbol": asset}
         else: _filter = {}
         return self.client.get(
