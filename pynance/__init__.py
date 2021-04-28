@@ -5,7 +5,7 @@ import logging
 from pynance.system import System
 from pynance.history import History
 from pynance.wallet import Wallet
-
+from pynance.assets import Assets
 
 class PyNance(Core):
     def __init__(self, api_key=None, api_secret=None, flask_app=None, debug=False, verbose=False):
@@ -35,7 +35,8 @@ class PyNance(Core):
         extensions = [
             ('System', System),
             ('History', History),
-            ('Wallet', Wallet)
+            ('Wallet', Wallet),
+            ('Assets', Assets),
         ]
         [setattr(self, i[0].lower(), i[1](self)) for i in extensions]
         self.logger.info(f'PyNance Ready for use ...')

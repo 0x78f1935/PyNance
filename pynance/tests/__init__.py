@@ -4,6 +4,7 @@ from unittest import TextTestRunner
 from pynance.tests.system import SystemTest
 from pynance.tests.history import HistoryTest
 from pynance.tests.wallet import WalletTest
+from pynance.tests.assets import AssetsTest
 
 class TestSuite(BaseSuite):
     def __init__(self):
@@ -11,7 +12,8 @@ class TestSuite(BaseSuite):
         self._test_cases = {
             'test_system': SystemTest,
             'test_history': HistoryTest,
-            'test_wallet': WalletTest
+            'test_wallet': WalletTest,
+            'test_assets': AssetsTest
         }
         self._instantate()
     
