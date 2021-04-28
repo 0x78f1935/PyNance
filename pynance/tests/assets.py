@@ -29,3 +29,6 @@ class AssetsTest(TestCase):
             self.assertTrue('minWithdrawAmount' in test_data['BTC'])
             self.assertTrue('withdrawStatus' in test_data['BTC'])
             self.assertTrue('depositStatus' in test_data['BTC'])
+
+    def test_asset_fees(self):
+        self.assertGreaterEqual(len(self.pynance_prod.assets.fees().json), 1)

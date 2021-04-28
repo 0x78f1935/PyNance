@@ -27,3 +27,21 @@ class Assets(object):
         """
         endpoint = "/sapi/v1/asset/assetDetail"
         return self.client._get(endpoint, True, data={'asset': asset})
+
+    def fees(self, symbol="BTCUSDT"):
+        """Fetch details of assets supported on Binance.
+            On Status code 200
+            
+            Returns
+            -------
+            list:
+                [
+                    {
+                        "symbol": "ADABNB",
+                        "makerCommission": "0.001",
+                        "takerCommission": "0.001"
+                    }, ...
+                ]
+        """
+        endpoint = "/sapi/v1/asset/tradeFee"
+        return self.client._get(endpoint, True, data={'symbol': symbol})
