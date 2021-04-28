@@ -29,12 +29,6 @@ class SystemTest(TestCase):
             self.assertTrue(maintenance.json['status'] <= 1)
             self.assertTrue(maintenance.json['status'] >= 0)
             self.assertTrue(maintenance.json['msg'], True if maintenance.json['msg'] in 'normal|system' else False)
-    
-    def test_user_data(self):
-        """Only works when there is value in the account.
-        """
-        if self.USE_IN_UNITTEST == 1:
-            self.assertGreaterEqual(len(self.pynance_prod.system.user_data().json), 1)
 
     def test_trading_status(self):
         """Only works when there is value in the account.

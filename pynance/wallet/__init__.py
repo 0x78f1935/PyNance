@@ -23,3 +23,7 @@ class Wallet(object):
         """
         endpoint = "/sapi/v1/capital/deposit/address"
         return self.client._get(endpoint, True, data={'coin': coin})
+
+    def balance(self):
+        endpoint = "/sapi/v1/capital/config/getall"
+        return self.client._get(endpoint, True)

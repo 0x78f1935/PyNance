@@ -22,10 +22,6 @@ class System(object):
         endpoint = "/sapi/v1/system/status/"
         return self.client._get(endpoint, True)
     
-    def user_data(self):
-        endpoint = "/sapi/v1/capital/config/getall"
-        return self.client._get(endpoint, True)
-    
     def trading_status(self):
         endpoint = "/sapi/v1/account/apiTradingStatus"
         return self.client._get(endpoint, True)

@@ -28,3 +28,9 @@ class WalletTest(TestCase):
             self.assertTrue('address' in deposit_address.json.keys())
             self.assertTrue('tag' in deposit_address.json.keys())
             self.assertTrue('url' in deposit_address.json.keys())
+
+    def test_balance(self):
+        """Only works when there is value in the account.
+        """
+        if self.USE_IN_UNITTEST == 1:
+            self.assertGreaterEqual(len(self.pynance_prod.wallet.balance().json), 1)
