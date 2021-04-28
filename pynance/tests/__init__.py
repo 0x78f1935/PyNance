@@ -1,20 +1,17 @@
 from unittest import TestSuite as BaseSuite
 from unittest import TextTestRunner
 
-from pynance._tests.wallet import WalletTest
-from pynance._tests.price import PriceTest
-from pynance._tests.orders import OrdersTest
-from pynance._tests.binance import BinanceTest
-
+from pynance.tests.system import SystemTest
+from pynance.tests.history import HistoryTest
+from pynance.tests.wallet import WalletTest
 
 class TestSuite(BaseSuite):
     def __init__(self):
         BaseSuite.__init__(self)
         self._test_cases = {
-            'test_orders': OrdersTest,
-            'test_price': PriceTest,
-            'test_wallet': WalletTest,
-            'test_client': BinanceTest,
+            'test_system': SystemTest,
+            'test_history': HistoryTest,
+            'test_wallet': WalletTest
         }
         self._instantate()
     

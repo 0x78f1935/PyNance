@@ -15,6 +15,16 @@ You can run unittests by running
 
     python -m unittest
 
+Some unittests are only available in production.
+If you place a file called `.env` into the root of PyNance you can add the following values to run the unittests in production
+
+    USE_IN_UNITTEST=1
+    API_KEY=<Your api key>
+    API_SECRET=<Your api secret>
+
+Note: Do not add `"` (quotes) around your values.
+Tests run in production mode will have no impact on the account itself. 
+
 # BUILDING
 
 You need to build a whl package.

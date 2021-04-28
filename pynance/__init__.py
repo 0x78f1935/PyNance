@@ -1,47 +1,57 @@
+from pynance.core.exceptions import PyNanceException
 from pynance.core import Core
+import logging
+
+from pynance.system import System
+from pynance.history import History
 from pynance.wallet import Wallet
-from pynance.price import Price
-from pynance.orders import Orders
-from datetime import datetime
 
 
 class PyNance(Core):
-    def __init__(self, api_key, api_secret, endpoint="https://www.binance.com", app=None):
-        self.endpoint = endpoint # Needs to be before super of Core
-        Core.__init__(self, api_key, api_secret, app)
-        self.wallet = Wallet(self)
-        self.price = Price(self)
-        self.orders = Orders(self)
-
-    def servertime(self, to_date=False, strftime=None):
-        """Get the current Binance server time
+    def __init__(self, api_key=None, api_secret=None, flask_app=None, debug=False, verbose=False):
+        """Call this class to instantiate PyNance.        
 
         Args:
-            to_date (bool, optional): Formats the date with the datetime library. Defaults to False.
-            strftime (string, optional): Use strformat string format to manipulate the date. Defaults to None.
+            api_key (str, required): [Binance API key, required unless debug is True]
+            api_secret (str, required): [Binance API secret, required unless debug is True]
+            api_endpoint (str, optional): [description]. Defaults to "https://api.binance.com unless debug is True".
+            flask_app ([type], optional): [description]. Defaults to None, when provided. Instantiate credentials through flask config.
+            debug (bool, optional): [description]. Defaults to False When True connect to the Binance Test Sandbox environment".
 
-        Returns:
-            str: The Binance server time formatted according to the options
         """
-        response = self.get(f'{self.endpoint}/api/v3/time', signed=False)
-        if to_date or strftime is not None: 
-            if strftime is not None: return str(
-                datetime.utcfromtimestamp(response.json['serverTime']/1000).strftime(strftime)
-            )
-            else: return str(datetime.utcfromtimestamp(response.json['serverTime']/1000))
-        else: return str(response.json['serverTime'])
-
-    def exchange_info(self, asset=None):
-        """Get information about the exchange or about a certian asset
-
-        Args:
-            asset (string, optional): A trade currency. Defaults to None.
-                                      If None returns info about the exchange and all the coins
-                                      If provided it will return only info about the coin.
-        """
-        if asset is None: return self.get(f'{self.endpoint}/api/v3/exchangeInfo', signed=False)
+        if debug:
+            api_key = "oepK24J3sKucEaTHd9EuHI9FfgHp8r7jOAxwmM1rwKDsOpn5XJgHrTUqazb5isca"
+            api_secret = "SSFSWtBcI9ew5UnOMH4I6JiCujijmEVdA8b0EIHbXTN6z5ZVvjGI7lk3fJSk8PDD"
+            api_endpoint = "https://testnet.binance.vision"
         else:
-            data = self.get(f'{self.endpoint}/api/v3/exchangeInfo', signed=False)
-            coin = [i for i in data.json['symbols'] if i['symbol'] == asset]
-            if coin: return coin.pop(0)
-            else: return []
+            if (api_key is None or api_secret is None): raise PyNanceException("Please provide an valid  api_key and api_secret")
+            api_endpoint="https://api.binance.com"
+        Core.__init__(self, api_key, api_secret, api_endpoint, verbose)
+
+        if flask_app is not None: self.init_app(flask_app)
+        else: self._set_session_headers()
+
+        self.logger.debug(f'Loading all available modules ...')
+        extensions = [
+            ('System', System),
+            ('History', History),
+            ('Wallet', Wallet)
+        ]
+        [setattr(self, i[0].lower(), i[1](self)) for i in extensions]
+        self.logger.info(f'PyNance Ready for use ...')
+
+    def init_app(self, app):
+        """This method can be used to instantiate a instance in a flask application.
+        This flask configuration needs to contain the following variables linked to your binance
+        information
+
+        - BINANCE_API_KEY
+        - BINANCE_API_SECRET
+        - BINANCE_API_ENDPOINT
+        """
+        self.logger.debug(f'PyNance found a Flask app, loading credentials from flask configuration ...')
+        self.api_key = app.config["BINANCE_API_KEY"]
+        self.api_secret = app.config["BINANCE_API_SECRET"]
+        self.api_endpoint = app.config['BINANCE_API_ENDPOINT']
+        self.logger.debug(f'Flask configuration loaded ...')
+        self._set_session_headers()

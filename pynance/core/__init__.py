@@ -1,60 +1,56 @@
-from pynance.core.exceptions import BinanceAPIException
 from pynance.core.response import Response
+from pynance.core.exceptions import *
 from operator import itemgetter
 import requests
+import hashlib
+import logging
 import time
 import hmac
-import hashlib
 
-
-class Core(object):
-    def __init__(self, api_key, api_secret, app):
+class Core(requests.Session):
+    def __init__(self, api_key, api_secret, api_endpoint, verbose=False):
+        requests.Session.__init__(self)
         self.api_key = api_key
         self.api_secret = api_secret
+        self.api_endpoint = api_endpoint
 
-        self.session = requests.session()
+        logging.basicConfig(
+            format='%(asctime)s [PyNance:%(levelname)s](%(funcName)s:%(lineno)d) -> %(message)s', 
+            datefmt='%I:%M:%S %p %d-%m-%Y', 
+            level=logging.DEBUG if verbose else logging.INFO
+        )
+        self.logger = logging.getLogger('PyNance')
+        self.logger.debug('Core instantiated ...')
 
-        if app is not None: self.init_app(app)
-        else: self._set_session_headers()
-
-    def init_app(self, app):
-        """This method can be used to instantiate a instance in a flask application.
-        This flask configuration needs to contain the following variables linked to your binance
-        information
-
-        - BINANCE_API_KEY
-        - BINANCE_API_SECRET
-        - BINANCE_ENDPOINT
-        """
-        self.api_key = app.config["BINANCE_API_KEY"]
-        self.api_secret = app.config["BINANCE_API_SECRET"]
-        self.endpoint = app.config['BINANCE_ENDPOINT']
-        self._set_session_headers()
-    
     def _set_session_headers(self):
         """Sets the headers to make requests with the binance API based on the provided token information"""
-        self.session.headers.update({
+        self.logger.debug('Set request headers ...')
+        self.headers.update({
             'Accept': 'application/json',
             'User-Agent': 'binance/PyNance',
             'X-MBX-APIKEY': self.api_key
         })
-    
-    def _request(self, method, endpoint, signed=True, force_params=True, **kwargs):
-        """This method is a generic method to handle all the requests with.
+        self.logger.debug('API-Key ready ...')
+
+    def _request(self, method, endpoint, authenticated=True, force_params=True, timeout=10, **kwargs):
+        """[summary]
 
         Args:
-            method (string): GET,POST,PUT,ETC,ETC,..
-            endpoint (string): The endpoint you would like to call
-            signed (bool, optional): When enabled sign the request with authentication info. Defaults to True.
-            force_params (bool, optional): When true the data will be formatted in the url instead. Defaults to True.
+            method (string, required): [The request method, GET, POST, etc]
+            endpoint (string, required): [The endpoint]
+            authenticated (bool, optional): [Authenticated request]. Defaults to True.
+            request_params ([tuple], optional): [When set, force the parameters in the endpoint as args].
+            timeout (int, optional): [The time in seconds until the request will timeout]. Defaults to 10.
         """
-        # Set timeout for the request
-        kwargs['timeout'] = 10
+        if not endpoint.startswith(self.api_endpoint): 
+            self.logger.warning(f'Endpoint seems to be without base url ... {endpoint} ... applying base url ...')
+            endpoint = self.api_endpoint + endpoint
 
-        data = kwargs.get('data', None)
+        self.logger.debug(f'Processing request data for ... {endpoint} ...')
+        data = kwargs.get('data', {})
+        kwargs['data'] = data
         # Check if the request contains data
         if data and isinstance(data, dict):
-            kwargs['data'] = data
 
             # find any requests params passed and apply them
             if 'requests_params' in kwargs['data']:
@@ -62,7 +58,8 @@ class Core(object):
                 kwargs.update(kwargs['data']['requests_params'])
                 del(kwargs['data']['requests_params'])
 
-        if signed: # generate signature
+        if authenticated: # generate signature
+            self.logger.debug(f'Signing ... {endpoint} ...')
             kwargs['data']['timestamp'] = int(time.time() * 1000)
             kwargs['data']['signature'] = self._sign(kwargs['data'])
         
@@ -80,12 +77,12 @@ class Core(object):
             kwargs['params'] = '&'.join('%s=%s' % (data[0], data[1]) for data in kwargs['data'])
             del(kwargs['data'])
 
-        self.response = getattr(self.session, method)(endpoint, **kwargs)
+        response = getattr(self, method)(endpoint, **kwargs)
 
-        if 'x-mbx-used-weight' in self.response.headers.keys(): 
-            print(f'[PYNANCE] Weight: {self.response.headers["x-mbx-used-weight"]} kg')
+        if 'x-mbx-used-weight' in response.headers.keys(): 
+            self.logger.debug(f'Weight: {response.headers["x-mbx-used-weight"]} kg')
 
-        return self._handle_response()
+        return self._handle_response(response)
 
     def _sign(self, data:dict):
         """Signs the request with the authentication information provided by the enduser."""
@@ -108,37 +105,14 @@ class Core(object):
         if has_signature:
             params.append(('signature', data['signature']))
         return params
-    
-    def _handle_response(self):
-        """Checks what status code we retrieved from the response of our request and act accordingly to it"""
-        if self.response.status_code == 429:
-            print(self.response.json())  # I would like to know what the payload looks like
-            BinanceAPIException(
-                'You have been rate limited, stop making requests or your account might get banned', 
-                self.response
-            )
-        elif self.response.status_code == 418:
-            print(self.response.json()) # I would like to know what the payload looks like
-            BinanceAPIException(
-                'You have been temporarly banned, You made to many requests', 
-                self.response
-            )
-        elif self.response.status_code == 200:
-            return self._objectify()
-        elif self.response.status_code == 404:
-            BinanceAPIException('Page not found', self.response)
-        elif self.response.status_code == 503:
-            BinanceAPIException("Binance under mainitainence, service unavailable", self.response)
-            return {"msg": "Binance under mainitainence, service unavailable", "error": True}
-        else:
-            print(self.response.json()) # I would like to know what the payload looks like
-            BinanceAPIException('Unknown error', self.response)
-    
-    def _objectify(self):
-        if self.response: return Response(self.response)
-        return None
 
-    def get(self, endpoint, signed=False, **kwargs):
+    def _handle_response(self, resp):
+        resp = Response(resp)
+        self.close() # Close the response
+        self.logger.info(f'Request ... {resp.response_info["endpoint"]} ... Done with status code {resp.response_info["status_code"]}!')
+        return resp
+
+    def _get(self, endpoint, signed=False, **kwargs):
         """Executes a get request with the generic self._request method.
 
         Args:
@@ -152,9 +126,10 @@ class Core(object):
                 data={"symbol": "LTCBTC", "interval": "1m"}
             )
         """
+        self.logger.debug(f'GET request for ... {endpoint} ...')
         return self._request('get', endpoint, signed, **kwargs)
     
-    def post(self, endpoint, signed=False, **kwargs):
+    def _post(self, endpoint, signed=False, **kwargs):
         """Executes a post request with the generic self._request method.
 
         Args:
@@ -168,9 +143,10 @@ class Core(object):
                 data={"symbol": "LTC", "quantity": "1"}
             )
         """
+        self.logger.debug(f'POST request for ... {endpoint} ...')
         return self._request('post', endpoint, signed, **kwargs)
 
-    def delete(self, endpoint, signed=False, **kwargs):
+    def _delete(self, endpoint, signed=False, **kwargs):
         """Executes a delete request with the generic self._request method.
 
         Args:
@@ -184,4 +160,5 @@ class Core(object):
                 data={"symbol": "LTC", "origClientOrderId": "1"}
             )
         """
+        self.logger.debug(f'DELETE request for ... {endpoint} ...')
         return self._request('delete', endpoint, signed, **kwargs)
