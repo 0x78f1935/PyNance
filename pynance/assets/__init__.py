@@ -1,3 +1,4 @@
+from pynance.core.exceptions import BinanceAPIException
 from statistics import mean
 
 
