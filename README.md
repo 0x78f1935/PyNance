@@ -1,6 +1,3 @@
-# Binance will delist all WAPI endpoints from the Binance API at 2021-08-01 2:00 AM (UTC). Use the [future](https://github.com/0x78f1935/PyNance/tree/future) branch instead if you make your own application.
-
-
 [![Build Status](https://www.travis-ci.com/0x78f1935/PyNance.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance)
 
 # binance
