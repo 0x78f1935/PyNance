@@ -31,7 +31,8 @@ class AssetsTest(TestCase):
             self.assertTrue('depositStatus' in test_data['BTC'])
 
     def test_asset_fees(self):
-        self.assertGreaterEqual(len(self.pynance_prod.assets.fees().json), 1)
+        if self.USE_IN_UNITTEST == 1: 
+            self.assertGreaterEqual(len(self.pynance_prod.assets.fees().json), 1)
 
     def test_average(self):
         test_data = self.pynance_test.assets.average('LTCBTC')
