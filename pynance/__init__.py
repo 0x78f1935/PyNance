@@ -48,7 +48,6 @@ class PyNance(Core):
 
         - BINANCE_API_KEY
         - BINANCE_API_SECRET
-        - BINANCE_API_ENDPOINT
         """
         self.logger.debug(f'PyNance found a Flask app, loading credentials from flask configuration ...')
         self.api_key = app.config["BINANCE_API_KEY"]
