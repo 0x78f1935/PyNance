@@ -9,15 +9,14 @@ from pynance.assets import Assets
 from pynance.orders import Orders
 
 class PyNance(Core):
-    def __init__(self, api_key=None, api_secret=None, flask_app=None, debug=False, verbose=False):
+    def __init__(self, api_key=None, api_secret=None, flask_app=False, debug=False, verbose=False):
         """Call this class to instantiate PyNance.        
 
         Args:
             api_key (str, required): [Binance API key, required unless debug is True]
             api_secret (str, required): [Binance API secret, required unless debug is True]
-            api_endpoint (str, optional): [description]. Defaults to "https://api.binance.com unless debug is True".
-            flask_app ([type], optional): [description]. Defaults to None, when provided. Instantiate credentials through flask config.
-            debug (bool, optional): [description]. Defaults to False When True connect to the Binance Test Sandbox environment".
+            flask_app (bool, optional): [Defaults to false, when true. Skip Instantiate credentials so we can call it through flask.]
+            debug (bool, optional): [Defaults to False When True connect to the Binance Test Sandbox environment".]
 
         """
         if debug:
@@ -25,12 +24,11 @@ class PyNance(Core):
             api_secret = "SSFSWtBcI9ew5UnOMH4I6JiCujijmEVdA8b0EIHbXTN6z5ZVvjGI7lk3fJSk8PDD"
             api_endpoint = "https://testnet.binance.vision"
         else:
-            if (api_key is None or api_secret is None): raise PyNanceException("Please provide an valid  api_key and api_secret")
+            if (api_key is None or api_secret is None) and not flask_app: raise PyNanceException("Please provide an valid  api_key and api_secret")
             api_endpoint="https://api.binance.com"
         Core.__init__(self, api_key, api_secret, api_endpoint, verbose)
 
-        if flask_app is not None: self.init_app(flask_app)
-        else: self._set_session_headers()
+        if not flask_app: self._set_session_headers()
 
         self.logger.debug(f'Loading all available modules ...')
         extensions = [
