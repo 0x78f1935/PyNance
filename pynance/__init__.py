@@ -39,7 +39,7 @@ class PyNance(Core):
             ('Orders', Orders)
         ]
         [setattr(self, i[0].lower(), i[1](self)) for i in extensions]
-        self.logger.info(f'PyNance Ready for use ...')
+        if not flask_app: self.logger.info(f'PyNance Ready for use ...')
 
     def init_app(self, app):
         """This method can be used to instantiate a instance in a flask application.
@@ -56,3 +56,4 @@ class PyNance(Core):
         self.api_endpoint = app.config['BINANCE_API_ENDPOINT']
         self.logger.debug(f'Flask configuration loaded ...')
         self._set_session_headers()
+        self.logger.info(f'PyNance Ready for use ...')
