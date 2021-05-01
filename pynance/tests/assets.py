@@ -44,3 +44,9 @@ class AssetsTest(TestCase):
         self.assertTrue('price' in test_data.json)
         self.assertEqual(test_data.json['symbol'], 'LTCBTC')
         self.assertEqual(test_data.json['price'], '0.01100000')
+    
+    def test_klines(self):
+        test_data = self.pynance_test.assets.klines('LTCBTC')
+        self.assertGreaterEqual(len(test_data), 1)
+        test_data = self.pynance_test.assets.klines('LTCBTC', "15m", 1)
+        self.assertEqual(len(test_data), 1)

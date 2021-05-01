@@ -114,3 +114,15 @@ class Assets(object):
         ).json]
         if low: return mean([float(i["low"]) for i in data])
         else: return mean([float(i["high"]) for i in data])
+    
+    def klines(self, symbol="LTCBTC", timeframe="1h", total_candles=500):
+        endpoint = "/api/v3/klines"
+        return self.client._get(
+            endpoint,
+            False, 
+            data={
+                "symbol": symbol,
+                "interval": timeframe,
+                "limit": total_candles,
+            }
+        ).json
