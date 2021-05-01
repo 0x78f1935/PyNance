@@ -11,6 +11,16 @@ class Assets(object):
     """
     def __init__(self, client):
         self.client = client
+
+    def symbols(self, symbol=None):
+        """Latest price for a symbol or symbols.
+
+        Args:
+            symbol (string, optional): [When provided returns information about that symbol]. Defaults to None.
+        """
+        endpoint = "/api/v3/ticker/price"
+        if symbol is None: return self.client._get(endpoint, False)
+        else: return self.client._get(endpoint, False, data={'symbol': symbol})
     
     def details(self, asset="BTC"):
         """Fetch details of assets supported on Binance.
