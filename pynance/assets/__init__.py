@@ -116,6 +116,33 @@ class Assets(object):
         else: return mean([float(i["high"]) for i in data])
     
     def klines(self, symbol="LTCBTC", timeframe="1h", total_candles=500):
+        """Returns information based on the provided symbol
+        
+        Args:
+            symbol (str, optional): [Symbol]. Defaults to "LTCBTC".
+            timeframe (str, optional): [timeframe which is also available in binance graphs]. Defaults to "1h".
+            total_candles (int, optional): [total amount of candles to return]. Defaults to 500.
+
+        Returns:
+            [list]: [The list can be used in candle charts for example]
+
+            [
+                [
+                    1499040000000,      // Open time
+                    "0.01634790",       // Open
+                    "0.80000000",       // High
+                    "0.01575800",       // Low
+                    "0.01577100",       // Close
+                    "148976.11427815",  // Volume
+                    1499644799999,      // Close time
+                    "2434.19055334",    // Quote asset volume
+                    308,                // Number of trades
+                    "1756.87402397",    // Taker buy base asset volume
+                    "28.46694368",      // Taker buy quote asset volume
+                    "17928899.62484339" // Ignore.
+                ]
+            ]
+        """
         endpoint = "/api/v3/klines"
         return self.client._get(
             endpoint,
