@@ -144,7 +144,7 @@ class Assets(object):
             ]
         """
         endpoint = "/api/v3/klines"
-        return self.client._get(
+        klines = self.client._get(
             endpoint,
             False, 
             data={
@@ -153,3 +153,5 @@ class Assets(object):
                 "limit": total_candles,
             }
         ).json
+        if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
+        return klines
