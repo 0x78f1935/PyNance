@@ -23,11 +23,11 @@ class Wallet(object):
         """
         endpoint = "/sapi/v1/capital/deposit/address"
         data = self.client._get(endpoint, True, data={'coin': coin})
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
 
     def balance(self):
         endpoint = "/sapi/v1/capital/config/getall"
         data = self.client._get(endpoint, True)
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data

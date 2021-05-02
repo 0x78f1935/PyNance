@@ -21,11 +21,11 @@ class System(object):
         """
         endpoint = "/sapi/v1/system/status/"
         data = self.client._get(endpoint, True)
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
     
     def trading_status(self):
         endpoint = "/sapi/v1/account/apiTradingStatus"
         data = self.client._get(endpoint, True)
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
