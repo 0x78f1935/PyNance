@@ -30,7 +30,9 @@ class History(object):
                 ]
         """
         endpoint = "/sapi/v1/capital/deposit/hisrec"
-        return self.client._get(endpoint, True)
+        data = self.client._get(endpoint, True)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
 
     def withdraw(self):
         """Fetch withdraw history.
@@ -55,4 +57,6 @@ class History(object):
                 ]
         """
         endpoint = "/sapi/v1/capital/withdraw/history"
-        return self.client._get(endpoint, True)
+        data = self.client._get(endpoint, True)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data

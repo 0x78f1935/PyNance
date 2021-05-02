@@ -20,8 +20,12 @@ class System(object):
                 }
         """
         endpoint = "/sapi/v1/system/status/"
-        return self.client._get(endpoint, True)
+        data = self.client._get(endpoint, True)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
     
     def trading_status(self):
         endpoint = "/sapi/v1/account/apiTradingStatus"
-        return self.client._get(endpoint, True)
+        data = self.client._get(endpoint, True)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data

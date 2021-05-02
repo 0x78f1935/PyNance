@@ -1,6 +1,6 @@
 from pynance.core.exceptions import BinanceAPIException
 from statistics import mean
-
+import logging
 
 class Assets(object):
     """
@@ -19,8 +19,10 @@ class Assets(object):
             symbol (string, optional): [When provided returns information about that symbol]. Defaults to None.
         """
         endpoint = "/api/v3/ticker/price"
-        if symbol is None: return self.client._get(endpoint, False)
-        else: return self.client._get(endpoint, False, data={'symbol': symbol})
+        if symbol is None: data = self.client._get(endpoint, False)
+        else: data = self.client._get(endpoint, False, data={'symbol': symbol})
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
     
     def details(self, asset="BTC"):
         """Fetch details of assets supported on Binance.
@@ -40,7 +42,9 @@ class Assets(object):
                 ]
         """
         endpoint = "/sapi/v1/asset/assetDetail"
-        return self.client._get(endpoint, True, data={'asset': asset})
+        data = self.client._get(endpoint, True, data={'asset': asset})
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
 
     def fees(self, symbol="BTCUSDT"):
         """Fetch details of assets supported on Binance.
@@ -58,7 +62,9 @@ class Assets(object):
                 ]
         """
         endpoint = "/sapi/v1/asset/tradeFee"
-        return self.client._get(endpoint, True, data={'symbol': symbol})
+        data = self.client._get(endpoint, True, data={'symbol': symbol})
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
 
     def average(self, asset, timeframe=None, total_candles=60, low=True):
         """returns the price of any asset
@@ -90,7 +96,18 @@ class Assets(object):
         if timeframe is None: timeframe = "1m"
         if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
             raise BinanceAPIException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
-        data = [{
+
+        data = self.client._get(
+            endpoint,
+            False, 
+            data={
+                "symbol": asset,
+                "interval": timeframe,
+                "limit": total_candles
+            }
+        )
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        expanded = [{
             "open time": i[0],
             "open": i[1],
             "high": i[2],
@@ -103,17 +120,9 @@ class Assets(object):
             "taker buy base asset volume": i[9],
             "taker buy quote asset volume": i[10],
             "ignore.": i[11]
-        } for i in self.client._get(
-            endpoint,
-            False, 
-            data={
-                "symbol": asset,
-                "interval": timeframe,
-                "limit": total_candles
-            }
-        ).json]
-        if low: return mean([float(i["low"]) for i in data])
-        else: return mean([float(i["high"]) for i in data])
+        } for i in data.json]
+        if low: return mean([float(i["low"]) for i in expanded])
+        else: return mean([float(i["high"]) for i in expanded])
     
     def klines(self, symbol="LTCBTC", timeframe="1h", total_candles=500):
         """Returns information based on the provided symbol
@@ -144,7 +153,7 @@ class Assets(object):
             ]
         """
         endpoint = "/api/v3/klines"
-        klines = self.client._get(
+        data = self.client._get(
             endpoint,
             False, 
             data={
@@ -152,6 +161,8 @@ class Assets(object):
                 "interval": timeframe,
                 "limit": total_candles,
             }
-        ).json
+        )
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        klines = data.json
         if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
         return klines

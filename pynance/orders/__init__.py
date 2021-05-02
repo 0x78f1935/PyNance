@@ -14,7 +14,9 @@ class Orders(object):
         """
         if asset is None: _filter = {}
         else: _filter = {'symbol': asset}
-        return self.client._get('/api/v3/openOrders', True, data=_filter)
+        data = self.client._get('/api/v3/openOrders', True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
 
     def create(self, asset=None, quantity=None, buy=True, stop_price=None, test=False, order_id=str(uuid4())):
         """This method is able to create different kind of buy/sell order on market value.
@@ -55,7 +57,9 @@ class Orders(object):
         
         if test: endpoint = '/api/v3/order/test'
         else: endpoint = '/api/v3/order'
-        return self.client._post(endpoint, True, data=_filter)
+        data = self.client._post(endpoint, True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
 
     def cancel(self, asset=None, order_id=None, test=True):
         """Cancel an order based on the asset and order ID
@@ -76,4 +80,6 @@ class Orders(object):
             endpoint = '/api/v3/order'
             _filter = {"symbol": asset, "origClientOrderId": order_id}
         if test: endpoint += '/test'
-        return self.client._delete(endpoint, True, data=_filter)
+        data = self.client._delete(endpoint, True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
