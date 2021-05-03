@@ -21,7 +21,7 @@ class Assets(object):
         endpoint = "/api/v3/ticker/price"
         if symbol is None: data = self.client._get(endpoint, False)
         else: data = self.client._get(endpoint, False, data={'symbol': symbol})
-        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
     
     def details(self, asset="BTC"):
@@ -43,24 +43,7 @@ class Assets(object):
         """
         endpoint = "/sapi/v1/asset/assetDetail"
         data = self.client._get(endpoint, True, data={'asset': asset})
-        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
-        return data
-
-    def exchange_info(self, symbols:list=[]):
-        """Get information about the exchange or about a certian asset
-
-        Args:
-            symbol (string, optional): A trade currency. Defaults to None.
-                                        If None returns info about the exchange and all the coins
-                                        If provided it will return only info about the coin.
-        """
-        endpoint = "/api/v3/exchangeInfo"
-        if not symbols: 
-            data = self.client._get(endpoint, signed=False)
-        else:
-            data = self.client._get(endpoint, signed=False)
-            data.json['symbols'] = [i for i in data.json['symbols'] if i['symbol'] in symbols]
-        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
     def fees(self, symbol="BTCUSDT"):
@@ -80,7 +63,7 @@ class Assets(object):
         """
         endpoint = "/sapi/v1/asset/tradeFee"
         data = self.client._get(endpoint, True, data={'symbol': symbol})
-        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
     def average(self, asset, timeframe=None, total_candles=60, low=True):
@@ -123,7 +106,7 @@ class Assets(object):
                 "limit": total_candles
             }
         )
-        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         expanded = [{
             "open time": i[0],
             "open": i[1],
@@ -179,7 +162,7 @@ class Assets(object):
                 "limit": total_candles,
             }
         )
-        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         klines = data.json
         if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
         return klines
