@@ -87,8 +87,8 @@ class Core(requests.Session):
     def _sign(self, data:dict):
         """Signs the request with the authentication information provided by the enduser."""
         ordered_data = self._order(data)
-        query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data]).encode('utf-8')
-        m = hmac.new(self.api_secret.encode('utf-8'), query_string, hashlib.sha256)
+        query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data])
+        m = hmac.new(self.api_secret.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256)
         return m.hexdigest()
 
     def _order(self, data:dict):

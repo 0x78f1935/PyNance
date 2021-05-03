@@ -24,7 +24,7 @@ class PyNance(Core):
             api_secret = "SSFSWtBcI9ew5UnOMH4I6JiCujijmEVdA8b0EIHbXTN6z5ZVvjGI7lk3fJSk8PDD"
             api_endpoint = "https://testnet.binance.vision"
         else:
-            if (api_key is None or api_secret is None) and not flask_app: raise PyNanceException("Please provide an valid  api_key and api_secret")
+            if (api_key is None or api_secret is None) and not flask_app: raise PyNanceException("Please provide an valid api_key and api_secret")
             api_endpoint="https://api.binance.com"
         Core.__init__(self, api_key, api_secret, api_endpoint, verbose)
 
