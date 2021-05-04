@@ -1,4 +1,14 @@
-[![Build Status](https://www.travis-ci.com/0x78f1935/PyNance.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance)
+
+# PyNance - Core
+
+| PyNance      	| Status 	| Branch 	| Reference 	|
+|--------------	|--------	|--------	|-----------	|
+| Core         	| [![Build Status](https://www.travis-ci.com/0x78f1935/PyNance.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance)	| Master | [Visit](https://github.com/0x78f1935/PyNance/tree/master) |
+| Core         	| [![Build Status](https://www.travis-ci.com/0x78f1935/PyNance.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance)	| Development | [Visit](https://github.com/0x78f1935/PyNance/tree/development) |
+| Webinterface 	| [![Build Status](https://www.travis-ci.com/0x78f1935/PyNance-Webinterface.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance-Webinterface) | Master | [Visit](https://github.com/0x78f1935/PyNance-Webinterface/tree/master) |
+| Webinterface 	| [![Build Status](https://www.travis-ci.com/0x78f1935/PyNance-Webinterface.svg?branch=master)](https://www.travis-ci.com/0x78f1935/PyNance-Webinterface) | Development | [Visit](https://github.com/0x78f1935/PyNance-Webinterface/tree/development) |
+
+---
 
 # binance
 ## Binance Account
