@@ -31,7 +31,7 @@ class History(object):
         """
         endpoint = "/sapi/v1/capital/deposit/hisrec"
         data = self.client._get(endpoint, True)
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data
 
     def withdraw(self):
@@ -58,5 +58,5 @@ class History(object):
         """
         endpoint = "/sapi/v1/capital/withdraw/history"
         data = self.client._get(endpoint, True)
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data
