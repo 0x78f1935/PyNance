@@ -82,3 +82,9 @@ class FuturesTest(TestCase):
         self.assertEqual(type(test_data.json[0]['symbol']), str)
         test_data = self.pynance_test.futures.assets.best_price_qty()
         self.assertGreaterEqual(len(test_data.json), 1)
+
+    def test_klines(self):
+        test_data = self.pynance_test.assets.klines('LTCBTC')
+        self.assertGreaterEqual(len(test_data), 1)
+        test_data = self.pynance_test.assets.klines('LTCBTC', "15m", 1)
+        self.assertEqual(len(test_data), 1)

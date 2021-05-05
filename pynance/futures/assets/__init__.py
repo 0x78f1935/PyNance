@@ -7,7 +7,7 @@ class Assets(object):
     def __init__(self, client):
         self.client = client
 
-    def symbols(self, symbol=None):
+    def symbols(self, symbol:str=None):
         """Latest price for a symbol or symbols.
 
         Args:
@@ -52,3 +52,45 @@ class Assets(object):
         self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
 
+    def klines(self, symbol="BTCUSDT", timeframe="1h", total_candles=500):
+        """Returns information based on the provided symbol
+        
+        Args:
+            symbol (str, optional): [Symbol]. Defaults to "BTCUSDT".
+            timeframe (str, optional): [timeframe which is also available in binance graphs]. Defaults to "1h".
+            total_candles (int, optional): [total amount of candles to return]. Defaults to 500.
+
+        Returns:
+            [list]: [The list can be used in candle charts for example]
+
+            [
+                [
+                    1598371200000,      // Open time
+                    "5.88275270",       // Open NAV price
+                    "6.03142087",       // Highest NAV price
+                    "5.85749741",       // Lowest NAV price
+                    "5.99403551",       // Close (or the latest) NAV price
+                    "2.28602984",       // Real leverage
+                    1598374799999,      // Close time
+                    "0",                // Ignore
+                    6209,               // Number of NAV update
+                    "14517.64507907",   // Ignore
+                    "0",                // Ignore
+                    "0"                 // Ignore
+                ]
+            ]
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/lvtKlines"
+        data = self.client._get(
+            endpoint,
+            False, 
+            data={
+                "symbol": symbol,
+                "interval": timeframe,
+                "limit": total_candles,
+            }
+        )
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        klines = data.json
+        if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
+        return klines
