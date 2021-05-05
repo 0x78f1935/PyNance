@@ -46,3 +46,14 @@ class FuturesTest(TestCase):
             self.assertGreaterEqual(len(leverage_bracket.json), 5)
             leverage_bracket = self.pynance_prod.futures.leverage_bracket('LTCUSDT')
             self.assertEqual(len(leverage_bracket.json), 1)
+
+    def test_change_leverage(self):
+        if self.USE_IN_UNITTEST == 1: 
+            test_data = self.pynance_prod.futures.change_leverage('BTCUSDT', 1)
+            self.assertTrue('symbol' in test_data.json.keys())
+            self.assertTrue('leverage' in test_data.json.keys())
+            self.assertTrue('maxNotionalValue' in test_data.json.keys())
+            self.assertEqual(type(test_data.json['symbol']), str)
+            self.assertEqual(type(test_data.json['leverage']), int)
+            self.assertEqual(type(test_data.json['maxNotionalValue']), str)
+        print(test_data.json)
