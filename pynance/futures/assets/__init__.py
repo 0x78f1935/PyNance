@@ -129,3 +129,18 @@ class Assets(object):
         )
         self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data
+
+    def mark_price(self, symbol:str=None):
+        """Mark Price and Funding Rate
+
+        Args:
+            symbol (str, optional): [Target symbol]. Defaults to None.
+
+        Returns:
+            [Response Object]: [PyNance Response Object]
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/premiumIndex"
+        if symbol is None: data = self.client._get(endpoint, True)
+        else: data = self.client._get(endpoint, True, data={'symbol': symbol})
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        return data
