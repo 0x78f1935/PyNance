@@ -6,6 +6,18 @@ class Assets(object):
     """
     def __init__(self, client):
         self.client = client
+
+    def symbols(self, symbol=None):
+        """Latest price for a symbol or symbols.
+
+        Args:
+            symbol (string, optional): [When provided returns information about that symbol]. Defaults to None.
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/ticker/price"
+        if symbol is None: data = self.client._get(endpoint, False)
+        else: data = self.client._get(endpoint, False, data={'symbol': symbol})
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        return data
     
     def exchange_info(self, symbols:list=[]):
         """Get information about the exchange or about a certian asset

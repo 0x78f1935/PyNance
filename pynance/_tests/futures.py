@@ -56,4 +56,11 @@ class FuturesTest(TestCase):
             self.assertEqual(type(test_data.json['symbol']), str)
             self.assertEqual(type(test_data.json['leverage']), int)
             self.assertEqual(type(test_data.json['maxNotionalValue']), str)
-        print(test_data.json)
+
+    def test_futures_symbols(self):
+        test_data = self.pynance_test.futures.assets.symbols('BTCUSDT')
+        self.assertTrue('symbol' in test_data.json)
+        self.assertTrue('price' in test_data.json)
+        self.assertEqual(test_data.json['symbol'], 'BTCUSDT')
+        self.assertGreaterEqual(len(test_data.json['price']), 1)
+        self.assertIsInstance(test_data.json['price'], str)
