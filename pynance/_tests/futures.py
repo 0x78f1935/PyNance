@@ -64,3 +64,21 @@ class FuturesTest(TestCase):
         self.assertEqual(test_data.json['symbol'], 'BTCUSDT')
         self.assertGreaterEqual(len(test_data.json['price']), 1)
         self.assertIsInstance(test_data.json['price'], str)
+
+    def test_best_price_qty(self):
+        test_data = self.pynance_test.futures.assets.best_price_qty('BTCUSDT')
+        self.assertTrue('time' in test_data.json[0].keys())
+        self.assertTrue('askQty' in test_data.json[0].keys())
+        self.assertTrue('askPrice' in test_data.json[0].keys())
+        self.assertTrue('bidQty' in test_data.json[0].keys())
+        self.assertTrue('bidPrice' in test_data.json[0].keys())
+        self.assertTrue('symbol' in test_data.json[0].keys())
+        
+        self.assertEqual(type(test_data.json[0]['time']), int)
+        self.assertEqual(type(test_data.json[0]['askQty']), str)
+        self.assertEqual(type(test_data.json[0]['askPrice']), str)
+        self.assertEqual(type(test_data.json[0]['bidQty']), str)
+        self.assertEqual(type(test_data.json[0]['bidPrice']), str)
+        self.assertEqual(type(test_data.json[0]['symbol']), str)
+        test_data = self.pynance_test.futures.assets.best_price_qty()
+        self.assertGreaterEqual(len(test_data.json), 1)

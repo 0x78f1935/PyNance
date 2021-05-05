@@ -18,6 +18,23 @@ class Assets(object):
         else: data = self.client._get(endpoint, False, data={'symbol': symbol})
         self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data
+
+    def best_price_qty(self, symbol:str=None):
+        """Best price/qty on the order book for a symbol or symbols.
+
+        Args:
+            symbol (string, optional): [target symbol]. Defaults to None.
+
+        Returns:
+            [Response Object]: [PyNance response object]
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/ticker/bookTicker"
+        data = self.client._get(endpoint, False)
+        if symbol is not None: 
+            raw = [i for i in data.json if i['symbol'] == symbol]
+            if raw: data = data._update_data({'_data': raw})
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        return data
     
     def exchange_info(self, symbols:list=[]):
         """Get information about the exchange or about a certian asset
