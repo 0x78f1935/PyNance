@@ -1,3 +1,6 @@
+from pynance.core.exceptions import PyNanceException
+
+
 class Assets(object):
     """Based on https://binance-docs.github.io/apidocs/futures/en/#general-info
 
@@ -80,6 +83,8 @@ class Assets(object):
                 ]
             ]
         """
+        if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
+            raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
         endpoint = "https://fapi.binance.com/fapi/v1/lvtKlines"
         data = self.client._get(
             endpoint,
@@ -94,3 +99,33 @@ class Assets(object):
         klines = data.json
         if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
         return klines
+
+    def volume(self, symbol:str="BTCUSDT", period:str="1h", limit:int=30):
+        """Fetch Buy / Sell voume information
+
+        Args:
+            symbol (str, required): [Target symbol]. Defaults to "BTCUSDT".
+            period (str, required): [Period]. Defaults to "1h". Available: ["5m","15m","30m","1h","2h","4h","6h","12h","1d"]
+
+            limit (int, optional): [description]. Defaults to 30. Max 500
+
+        Raises:
+            PyNanceException: [description]
+        """
+        if symbol is None: raise PyNanceException('Provide a valid symbol')
+        if period is None: raise PyNanceException('Provide a valid period: ["5m","15m","30m","1h","2h","4h","6h","12h","1d"]')
+        if period not in ["5m","15m","30m","1h","2h","4h","6h","12h","1d"]:
+            raise PyNanceException('Period is unknown, use one of the following periods: ["5m","15m","30m","1h","2h","4h","6h","12h","1d"]')
+        if limit <= 0 or limit > 500: raise PyNanceException('Volume limit has to be between 1 and 500')
+        endpoint = "https://fapi.binance.com/futures/data/takerlongshortRatio"
+        data = self.client._get(
+            endpoint,
+            False, 
+            data={
+                "symbol": symbol,
+                "period": period,
+                "limit": limit,
+            }
+        )
+        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        return data

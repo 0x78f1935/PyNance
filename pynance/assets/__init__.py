@@ -1,4 +1,4 @@
-from pynance.core.exceptions import BinanceAPIException
+from pynance.core.exceptions import BinanceAPIException, PyNanceException
 from statistics import mean
 import logging
 
@@ -111,7 +111,7 @@ class Assets(object):
         endpoint = "/api/v3/klines"
         if timeframe is None: timeframe = "1m"
         if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
-            raise BinanceAPIException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
+            raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
 
         data = self.client._get(
             endpoint,
@@ -168,6 +168,8 @@ class Assets(object):
                 ]
             ]
         """
+        if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
+            raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
         endpoint = "/api/v3/klines"
         data = self.client._get(
             endpoint,

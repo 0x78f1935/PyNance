@@ -83,8 +83,21 @@ class FuturesTest(TestCase):
         test_data = self.pynance_test.futures.assets.best_price_qty()
         self.assertGreaterEqual(len(test_data.json), 1)
 
-    def test_klines(self):
+    def test_future_klines(self):
         test_data = self.pynance_test.assets.klines('LTCBTC')
         self.assertGreaterEqual(len(test_data), 1)
         test_data = self.pynance_test.assets.klines('LTCBTC', "15m", 1)
         self.assertEqual(len(test_data), 1)
+
+    def test_future_volume(self):
+        test_data = self.pynance_test.futures.assets.volume(symbol='BTCUSDT', limit=5)
+        self.assertGreaterEqual(len(test_data.json), 1)
+        self.assertTrue('buySellRatio' in test_data.json[0].keys())
+        self.assertTrue('sellVol' in test_data.json[0].keys())
+        self.assertTrue('buyVol' in test_data.json[0].keys())
+        self.assertTrue('timestamp' in test_data.json[0].keys())
+
+        self.assertEqual(type(test_data.json[0]['buySellRatio']), str)
+        self.assertEqual(type(test_data.json[0]['sellVol']), str)
+        self.assertEqual(type(test_data.json[0]['buyVol']), str)
+        self.assertEqual(type(test_data.json[0]['timestamp']), int)
