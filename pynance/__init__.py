@@ -7,6 +7,7 @@ from pynance.history import History
 from pynance.wallet import Wallet
 from pynance.assets import Assets
 from pynance.orders import Orders
+from pynance.futures import Futures
 
 class PyNance(Core):
     def __init__(self, api_key=None, api_secret=None, flask_app=False, debug=False, verbose=False):
@@ -36,7 +37,8 @@ class PyNance(Core):
             ('History', History),
             ('Wallet', Wallet),
             ('Assets', Assets),
-            ('Orders', Orders)
+            ('Orders', Orders),
+            ('Futures', Futures)
         ]
         [setattr(self, i[0].lower(), i[1](self)) for i in extensions]
         if not flask_app: self.logger.info(f'PyNance Ready for use ...')

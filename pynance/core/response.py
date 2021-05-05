@@ -16,10 +16,18 @@ class Response(object):
         elif response.status_code >= 400 and response.status_code <= 499: self.response_info['reason'] += ', HTTP 4XX return codes are used for malformed requests; the issue is on the sender\'s side.'
         elif response.status_code >= 500 and response.status_code <= 599: self.response_info['reason'] += ', HTTP 5XX return codes are used for internal errors; the issue is on Binance\'s side.'
 
-        try: self.__data = response.json()
-        except JSONDecodeError: self.__data = []
+        try: self._data = response.json()
+        except JSONDecodeError: self._data = []
 
-        if isinstance(self.__data, dict): [setattr(self, k, self.__data[k]) for k in self.__data.keys()]
+        if isinstance(self._data, dict): [setattr(self, k, self._data[k]) for k in self._data.keys()]
+
+    def _update_data(self, data:dict):
+        for key, value in data.items():
+            try:
+                getattr(self, key)
+                setattr(self, key, value)
+            except AttributeError: pass
+        return self
 
     @property
     def json(self):
@@ -28,7 +36,7 @@ class Response(object):
         Returns:
             json type: Content directly from the Binance API
         """
-        return self.__data if self.__data else []
+        return self._data if self._data else []
     
     @property
     def info(self):

@@ -1,11 +1,12 @@
 from unittest import TestSuite as BaseSuite
 from unittest import TextTestRunner
 
-from pynance.tests.system import SystemTest
-from pynance.tests.history import HistoryTest
-from pynance.tests.wallet import WalletTest
-from pynance.tests.assets import AssetsTest
-from pynance.tests.orders import OrdersTest
+from pynance._tests.system import SystemTest
+from pynance._tests.history import HistoryTest
+from pynance._tests.wallet import WalletTest
+from pynance._tests.assets import AssetsTest
+from pynance._tests.orders import OrdersTest
+from pynance._tests.futures import FuturesTest
 
 class TestSuite(BaseSuite):
     def __init__(self):
@@ -15,7 +16,8 @@ class TestSuite(BaseSuite):
             'test_history': HistoryTest,
             'test_wallet': WalletTest,
             'test_assets': AssetsTest,
-            'test_orders': OrdersTest
+            'test_orders': OrdersTest,
+            'test_futures': FuturesTest
         }
         self._instantate()
     
