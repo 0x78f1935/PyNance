@@ -1,5 +1,6 @@
 from pynance.futures.assets import Assets
 from pynance.futures.orders import Orders
+from pynance.futures.wallet import Wallet
 from pynance.core.exceptions import PyNanceException
 
 class Futures(object):
@@ -9,7 +10,8 @@ class Futures(object):
         self.client = client
         extensions = [
             ('Assets', Assets),
-            ('Orders', Orders)
+            ('Orders', Orders),
+            ('Wallet', Wallet),
         ]
         [setattr(self, i[0].lower(), i[1](self.client)) for i in extensions]
     

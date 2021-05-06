@@ -137,3 +137,9 @@ class FuturesTest(TestCase):
     #     if self.USE_IN_UNITTEST == 1: 
     #         test_data = self.pynance_prod.futures.orders.open('BTCUSDT')
     #         self.assertEqual(type(test_data.info['status_code']), int)
+
+    def test_balance(self):
+        """Only works when there is value in the account.
+        """
+        if self.USE_IN_UNITTEST == 1:
+            self.assertGreaterEqual(len(self.pynance_prod.futures.wallet.balance().json), 1)
