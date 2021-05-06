@@ -2,7 +2,7 @@ from pynance.core.exceptions import PyNanceException
 
 
 class Assets(object):
-    """Based on https://binance-docs.github.io/apidocs/futures/en/#general-info
+    """Based on https://binance-docs.github.io/apidocs/futures/en/#change-log
 
     Args:
         client: PyNance Client
@@ -61,7 +61,7 @@ class Assets(object):
         Args:
             symbol (str, optional): [Symbol]. Defaults to "BTCUSDT".
             timeframe (str, optional): [timeframe which is also available in binance graphs]. Defaults to "1h".
-            total_candles (int, optional): [total amount of candles to return]. Defaults to 500.
+            total_candles (int, optional): [total amount of candles to return]. Defaults to 500. Max 1000
 
         Returns:
             [list]: [The list can be used in candle charts for example]
@@ -85,6 +85,7 @@ class Assets(object):
         """
         if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
             raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
+        if total_candles <= 0 or total_candles > 1000: raise PyNanceException("Total amount of candles needs to be between 1 and 1000")
         endpoint = "https://fapi.binance.com/fapi/v1/lvtKlines"
         data = self.client._get(
             endpoint,

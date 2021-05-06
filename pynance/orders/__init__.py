@@ -1,4 +1,4 @@
-from pynance.core.exceptions import BinanceException
+from pynance.core.exceptions import PyNanceException
 from uuid import uuid4
 
 class Orders(object):
@@ -36,14 +36,14 @@ class Orders(object):
             order_id (string, optional): Reference to the order created. Wil be randomly generated with a uuid4 if not set
 
         Raises:
-            BinanceException: Happens when asset or quantity is not provided
+            PyNanceException: Happens when asset or quantity is not provided
         
         Example
             client.orders.create('BTCUSDT', '1000', False, 5.22, test=True)
 
         NOTE: The error `{'code': -1013, 'msg': 'Filter failure: LOT_SIZE'}` indicates that the precision of the quantity is incorrect.
         """
-        if asset is None or quantity is None: raise BinanceException("Asset and quantity are required")
+        if asset is None or quantity is None: raise PyNanceException("Asset and quantity are required")
         _filter = {"symbol":asset, "quantity": quantity}
         if buy: side = "BUY"
         else: side = "SELL"
@@ -70,9 +70,9 @@ class Orders(object):
                                          If not provided this method will cancel all orders related to the asset
 
         Raises:
-            BinanceException: Happens when asset or order_id is not set.
+            PyNanceException: Happens when asset or order_id is not set.
         """
-        if asset is None: raise BinanceException("Asset and quantity are required")
+        if asset is None: raise PyNanceException("Asset and quantity are required")
         if order_id is None: 
             endpoint = '/api/v3/openOrders'
             _filter = {"symbol": asset}

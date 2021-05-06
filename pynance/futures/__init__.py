@@ -1,11 +1,15 @@
 from pynance.futures.assets import Assets
+from pynance.futures.orders import Orders
 from pynance.core.exceptions import PyNanceException
 
 class Futures(object):
+    """Based on https://binance-docs.github.io/apidocs/futures/en/#change-log
+    """
     def __init__(self, client):
         self.client = client
         extensions = [
-            ('Assets', Assets)
+            ('Assets', Assets),
+            ('Orders', Orders)
         ]
         [setattr(self, i[0].lower(), i[1](self.client)) for i in extensions]
     

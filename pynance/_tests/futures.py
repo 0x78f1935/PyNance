@@ -123,3 +123,8 @@ class FuturesTest(TestCase):
         self.assertEqual(type(test_data.json['interestRate']), str)
         self.assertEqual(type(test_data.json['nextFundingTime']), int)
         self.assertEqual(type(test_data.json['time']), int)
+
+    def test_open_orders(self):
+        if self.USE_IN_UNITTEST == 1: 
+            test_data = self.pynance_prod.futures.orders.open('BTCUSDT')
+            self.assertEqual(type(test_data.info['status_code']), int)
