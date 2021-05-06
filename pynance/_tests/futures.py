@@ -92,15 +92,18 @@ class FuturesTest(TestCase):
     def test_future_volume(self):
         test_data = self.pynance_test.futures.assets.volume(symbol='BTCUSDT', limit=5)
         self.assertGreaterEqual(len(test_data.json), 1)
-        self.assertTrue('buySellRatio' in test_data.json[0].keys())
-        self.assertTrue('sellVol' in test_data.json[0].keys())
-        self.assertTrue('buyVol' in test_data.json[0].keys())
-        self.assertTrue('timestamp' in test_data.json[0].keys())
+        self.assertTrue('symbol' in test_data.json[0].keys())
+        self.assertTrue('bidPrice' in test_data.json[0].keys())
+        self.assertTrue('bidQty' in test_data.json[0].keys())
+        self.assertTrue('askPrice' in test_data.json[0].keys())
+        self.assertTrue('askQty' in test_data.json[0].keys())
+        self.assertTrue('time' in test_data.json[0].keys())
 
-        self.assertEqual(type(test_data.json[0]['buySellRatio']), str)
-        self.assertEqual(type(test_data.json[0]['sellVol']), str)
-        self.assertEqual(type(test_data.json[0]['buyVol']), str)
-        self.assertEqual(type(test_data.json[0]['timestamp']), int)
+        self.assertEqual(type(test_data.json[0]['bidPrice']), int)
+        self.assertEqual(type(test_data.json[0]['bidQty']), int)
+        self.assertEqual(type(test_data.json[0]['askPrice']), int)
+        self.assertEqual(type(test_data.json[0]['askQty']), int)
+        self.assertEqual(type(test_data.json[0]['time']), int)
 
     def test_mark_price(self):
         test_data = self.pynance_test.futures.assets.mark_price()

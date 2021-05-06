@@ -10,19 +10,19 @@ class Orders(object):
     def __init__(self, client):
         self.client = client
 
-    def open(self, asset=None):
+    def open(self, symbol=None):
         """Retrieves a collection of all open orders
 
         Warning
-        If asset is None the weight is 40
+        If symbol is None the weight is 40
 
         Example
             client.orders.open() # or
             client.orders.open('LTCBTC')
         """
         endpoint = "https://fapi.binance.com/fapi/v1/openOrders"
-        if asset is None: _filter = {}
-        else: _filter = {'symbol': asset}
+        if symbol is None: _filter = {}
+        else: _filter = {'symbol': symbol}
         data = self.client._get(endpoint, True, data=_filter)
         self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data

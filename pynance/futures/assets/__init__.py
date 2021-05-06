@@ -128,6 +128,15 @@ class Assets(object):
                 "limit": limit,
             }
         )
+        raw = [{
+            'symbol': i['symbol'] if 'symbol' in i.keys() else None,
+            'bidPrice': float(i['bidPrice']) if 'bidPrice' in i.keys() else 0,
+            'bidQty': float(i['bidQty']) if 'bidQty' in i.keys() else 0,
+            'askPrice': float(i['askPrice']) if 'askPrice' in i.keys() else 0,
+            'askQty': float(i['askQty']) if 'askQty' in i.keys() else 0,
+            'time': i['time'] if 'time' in i.keys() else 0,
+        } for i in data.json]
+        if raw: data = data._update_data({'_data': raw})
         self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data
 
