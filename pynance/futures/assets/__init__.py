@@ -34,7 +34,14 @@ class Assets(object):
         endpoint = "https://fapi.binance.com/fapi/v1/ticker/bookTicker"
         data = self.client._get(endpoint, False)
         if symbol is not None: 
-            raw = [i for i in data.json if i['symbol'] == symbol]
+            raw = [{
+                'symbol': i['symbol'] if 'symbol' in i.keys() else None,
+                'bidPrice': float(i['bidPrice']) if 'bidPrice' in i.keys() else 0,
+                'bidQty': float(i['bidQty']) if 'bidQty' in i.keys() else 0,
+                'askPrice': float(i['askPrice']) if 'askPrice' in i.keys() else 0,
+                'askQty': float(i['askQty']) if 'askQty' in i.keys() else 0,
+                'time': i['time'] if 'time' in i.keys() else 0,
+            } for i in data.json if i['symbol'] == symbol]
             if raw: data = data._update_data({'_data': raw})
         self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
         return data
@@ -129,12 +136,10 @@ class Assets(object):
             }
         )
         raw = [{
-            'symbol': i['symbol'] if 'symbol' in i.keys() else None,
-            'bidPrice': float(i['bidPrice']) if 'bidPrice' in i.keys() else 0,
-            'bidQty': float(i['bidQty']) if 'bidQty' in i.keys() else 0,
-            'askPrice': float(i['askPrice']) if 'askPrice' in i.keys() else 0,
-            'askQty': float(i['askQty']) if 'askQty' in i.keys() else 0,
-            'time': i['time'] if 'time' in i.keys() else 0,
+            'buySellRatio': float(i['buySellRatio']) if 'buySellRatio' in i.keys() else 0,
+            'sellVol': float(i['sellVol']) if 'sellVol' in i.keys() else 0,
+            'buyVol': float(i['buyVol']) if 'buyVol' in i.keys() else 0,
+            'timestamp': i['timestamp'] if 'timestamp' in i.keys() else 0,
         } for i in data.json]
         if raw: data = data._update_data({'_data': raw})
         self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
