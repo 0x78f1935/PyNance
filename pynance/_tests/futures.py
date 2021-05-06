@@ -57,6 +57,15 @@ class FuturesTest(TestCase):
             self.assertEqual(type(test_data.json['leverage']), int)
             self.assertEqual(type(test_data.json['maxNotionalValue']), str)
 
+    def test_change_margin_type(self):
+        if self.USE_IN_UNITTEST == 1: 
+            test_data = self.pynance_prod.futures.change_margin_type('BTCUSDT', 'ISOLATED')
+            self.assertTrue('code' in test_data.json.keys())
+            self.assertTrue('msg' in test_data.json.keys())
+            self.assertEqual(type(test_data.json['code']), int)
+            self.assertEqual(type(test_data.json['msg']), str)
+            self.assertTrue(test_data.json['msg'] in ['No need to change margin type.', 'success'])
+
     def test_futures_symbols(self):
         test_data = self.pynance_test.futures.assets.symbols('BTCUSDT')
         self.assertTrue('symbol' in test_data.json)

@@ -36,14 +36,30 @@ class Futures(object):
         """Change user's initial leverage of specific symbol market.
 
         Args:
-            symbol ([type], required): [target symbol].
-            leverage ([type], required): [target initial leverage: int from 1 to 125].
+            symbol ([string], required): [target symbol].
+            leverage ([integer], required): [target initial leverage: int from 1 to 125].
         """
         endpoint = "https://fapi.binance.com/fapi/v1/leverage"
         if symbol is None: raise PyNanceException("Please provide a valid symbol")
         if leverage is None: raise PyNanceException("Provide a valid leverage")
         if leverage <= 0 or leverage >= 126: raise PyNanceException("Leverage not in allowed range")
         _filter = {"symbol":symbol, "leverage": leverage}
+        data = self.client._post(endpoint, True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        return data
+
+    def change_margin_type(self, symbol:str=None, margin_type:str=None):
+        """Change user's initial leverage of specific symbol market.
+
+        Args:
+            symbol ([string], required): [target symbol].
+            margin_type ([string], required): [Type of margin; ISOLATED or CROSSED].
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/marginType"
+        if symbol is None: raise PyNanceException("Please provide a valid symbol")
+        if margin_type is None: raise PyNanceException("Provide a valid margin_type")
+        if margin_type.upper() not in ['ISOLATED', 'CROSSED']: raise PyNanceException("Margin Type has to be ISOLATED or CROSSED")
+        _filter = {"symbol":symbol, "marginType": margin_type.upper()}
         data = self.client._post(endpoint, True, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
