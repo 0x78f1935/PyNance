@@ -89,7 +89,7 @@ class Assets(object):
         Example
             client.price.average('LTCBTC')
         """
-        endpoint = "https://fapi.binance.com/fapi/v1/lvtKlines"
+        endpoint = "https://fapi.binance.com/fapi/v1/klines"
         if timeframe is None: timeframe = "1m"
         if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
             raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
