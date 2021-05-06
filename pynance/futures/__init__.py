@@ -65,3 +65,14 @@ class Futures(object):
         data = self.client._post(endpoint, True, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
+
+    def change_hedge_mode(self, value:bool=False):
+        """Change user's position mode (Hedge Mode or One-way Mode ) on EVERY symbol
+
+        Args:
+            value ([boolean]): ["true": Hedge Mode; "false": One-way Mode]. Default False
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/positionSide/dual"
+        data = self.client._post(endpoint, True, data={"dualSidePosition":value})
+        self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
+        return data
