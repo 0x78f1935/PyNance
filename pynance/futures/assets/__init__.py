@@ -1,4 +1,5 @@
 from pynance.core.exceptions import PyNanceException
+from statistics import mean
 
 
 class Assets(object):
@@ -19,7 +20,7 @@ class Assets(object):
         endpoint = "https://fapi.binance.com/fapi/v1/ticker/price"
         if symbol is None: data = self.client._get(endpoint, False)
         else: data = self.client._get(endpoint, False, data={'symbol': symbol})
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
     def best_price_qty(self, symbol:str=None):
@@ -43,7 +44,7 @@ class Assets(object):
                 'time': i['time'] if 'time' in i.keys() else 0,
             } for i in data.json if i['symbol'] == symbol]
             if raw: data = data._update_data({'_data': raw})
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
     
     def exchange_info(self, symbols:list=[]):
@@ -61,6 +62,64 @@ class Assets(object):
             data.json['symbols'] = [i for i in data.json['symbols'] if i['symbol'] in symbols]
         self.client.logger.info(f'Weight: {data.info["weight"]} / 1200')
         return data
+
+    def average(self, asset, timeframe=None, total_candles=60, low=True):
+        """returns the price of any asset
+
+        Parameters
+            asset : str
+                Represents the symbol
+        
+            timeframe : str
+                Has to be one of the following: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']
+                Default: 1m
+
+            total_candles: int
+                The total amount of history candles to take in consideration. Max 1000
+                default: 60
+                When the total_candles is set to 60 and the timeframe is set to 1m you will get the average calculated
+                over each minute in the last hour.
+            
+            low: bool
+                The type of average we want to return. If low is True it takes the average of the lowest point of each candle.
+                Otherwise the highest point of each candle will be used to calculate the average on
+                default: True
+                
+        
+        Example
+            client.price.average('LTCBTC')
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/lvtKlines"
+        if timeframe is None: timeframe = "1m"
+        if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
+            raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
+
+        data = self.client._get(
+            endpoint,
+            False, 
+            data={
+                "symbol": asset,
+                "interval": timeframe,
+                "limit": total_candles
+            }
+        )
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        expanded = [{
+            "open time": i[0],
+            "open": i[1],
+            "high": i[2],
+            "low": i[3],
+            "close": i[4],
+            "volume": i[5],
+            "close time": i[6],
+            "quote asset volume": i[7],
+            "number of trades": i[8],
+            "taker buy base asset volume": i[9],
+            "taker buy quote asset volume": i[10],
+            "ignore.": i[11]
+        } for i in data.json]
+        if low: return mean([float(i["low"]) for i in expanded])
+        else: return mean([float(i["high"]) for i in expanded])
 
     def klines(self, symbol="BTCUSDT", timeframe="1h", total_candles=500):
         """Returns information based on the provided symbol
@@ -103,7 +162,7 @@ class Assets(object):
                 "limit": total_candles,
             }
         )
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         klines = data.json
         if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
         return klines
@@ -142,7 +201,7 @@ class Assets(object):
             'timestamp': i['timestamp'] if 'timestamp' in i.keys() else 0,
         } for i in data.json]
         if raw: data = data._update_data({'_data': raw})
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
     def mark_price(self, symbol:str=None):
@@ -157,5 +216,5 @@ class Assets(object):
         endpoint = "https://fapi.binance.com/fapi/v1/premiumIndex"
         if symbol is None: data = self.client._get(endpoint, True)
         else: data = self.client._get(endpoint, True, data={'symbol': symbol})
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data

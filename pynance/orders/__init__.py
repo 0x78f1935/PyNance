@@ -15,7 +15,7 @@ class Orders(object):
         if asset is None: _filter = {}
         else: _filter = {'symbol': asset}
         data = self.client._get('/api/v3/openOrders', True, data=_filter)
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
     def create(self, asset=None, quantity=None, buy=True, stop_price=None, test=False, order_id=str(uuid4())):
@@ -58,7 +58,7 @@ class Orders(object):
         if test: endpoint = '/api/v3/order/test'
         else: endpoint = '/api/v3/order'
         data = self.client._post(endpoint, True, data=_filter)
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
     def cancel(self, asset=None, order_id=None, test=True):
@@ -81,5 +81,5 @@ class Orders(object):
             _filter = {"symbol": asset, "origClientOrderId": order_id}
         if test: endpoint += '/test'
         data = self.client._delete(endpoint, True, data=_filter)
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data

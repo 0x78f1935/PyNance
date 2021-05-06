@@ -10,5 +10,5 @@ class Wallet(object):
     def balance(self):
         endpoint = "https://fapi.binance.com/fapi/v2/balance"
         data = self.client._get(endpoint, True)
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data

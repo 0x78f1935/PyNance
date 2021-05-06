@@ -24,7 +24,7 @@ class Orders(object):
         if symbol is None: _filter = {}
         else: _filter = {'symbol': symbol}
         data = self.client._get(endpoint, True, data=_filter)
-        self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
     
     # def create(self, 
@@ -89,5 +89,5 @@ class Orders(object):
     #             'quantity': quantity
     #         }
     #     )
-    #     self.client.logger.info(f'Weight: Weight: {data.info["weight"]} / 1200')
+    #     self.client.logger.info(f'Weight: {data.info["weight"]}')
     #     return data

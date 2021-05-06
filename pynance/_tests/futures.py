@@ -74,6 +74,10 @@ class FuturesTest(TestCase):
         self.assertGreaterEqual(len(test_data.json['price']), 1)
         self.assertIsInstance(test_data.json['price'], str)
 
+    def test_average(self):
+        test_data = self.pynance_test.assets.average('LTCBTC')
+        self.assertIsInstance(test_data, float)
+
     def test_best_price_qty(self):
         test_data = self.pynance_test.futures.assets.best_price_qty('BTCUSDT')
         self.assertTrue('symbol' in test_data.json[0].keys())
