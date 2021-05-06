@@ -27,67 +27,88 @@ class Orders(object):
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
     
-    # def create(self, 
-    #     symbol:str=None, 
-    #     quantity:float=None,
-    #     order_type:str="",
-    #     buy:bool=True, 
-    #     time_in_force:str="GTC",
-    #     reduce_only:bool=False,
-    #     price:str="",
-    #     newClientOrderId:str="",
-    #     stopPrice:str="",
-    #     workingType:str="",
-    #     closePosition:str="",
-    #     positionSide:str="",
-    #     callbackRate:str="",
-    #     activationPrice:str="",
-    #     newOrderRespType:str="",
-    # ):
-    #     """This method is able to create different kind of buy/sell order
+    def create(self, 
+        symbol:str=None, 
+        market_type:str=None, 
+        quantity:float=None, 
+        position:str=None, 
+        timeInForce:str=None,
+        reduceOnly:bool=False,
+        price:float=0,
+        stopPrice:float=None,
+        closePosition:bool= False,
+        activationPrice:float=None,
+        callbackRate:float=None,
+        workingType:str =None,
+        priceProtect:bool = False,
+        newOrderRespType:bool = False
+    ):
+        """Creates an open order in Binance Futures
 
-    #     Args:
-    #         symbol (str, required): [Target symbol].
-    #         quantity (float, required): [Total quantity].
-    #         order_type (str, required): [Market type to place order in].
-    #             ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']
-    #         buy (bool, optional): [Indicates to place a buy order or a sell order]. Defaults to True.
-    #         time_in_force (str, optional): [Order behavious]. Defaults to "GTC".
-    #             GTC - Good Till Cancel
-    #             IOC - Immediate or Cancel
-    #             FOK - Fill or Kill
-    #             GTX - Good Till Crossing (Post Only)
-    #         reduce_only (boolean, optional): [ "true" or "false". default "false". Cannot be sent in Hedge Mode; cannot be sent with closePosition=true]. Defaults to False.
-    #         price (str, optional): [description]. Defaults to "".
-    #         newClientOrderId (str, optional): [description]. Defaults to "".
-    #         stopPrice (str, optional): [description]. Defaults to "".
-    #         workingType (str, optional): [description]. Defaults to "".
-    #         closePosition (str, optional): [description]. Defaults to "".
-    #         positionSide (str, optional): [description]. Defaults to "".
-    #         callbackRate (str, optional): [description]. Defaults to "".
-    #         activationPrice (str, optional): [description]. Defaults to "".
-    #         newOrderRespType (str, optional): [description]. Defaults to "".
+        Args:
+            symbol (str, required): [Target symbol].
+            market_type (str, required): [Market Type, one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']]
+            quantity (float, optional): [Cannot be sent with closePosition=true(Close-All)]
+            position (str, optional): [Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.]. Defaults to BOTH.
+            timeInForce (str, optional): [
+                GTC - Good Till Cancel
+                IOC - Immediate or Cancel
+                FOK - Fill or Kill
+                GTX - Good Till Crossing (Post Only)
+            ]. Defaults to GTC.
+            reduceOnly (bool, optional): ["true" or "false". default "false". Cannot be sent in Hedge Mode; cannot be sent with closePosition=true]. Defaults to False.
+            price (float, optional): [Target price]. Defaults to 0.
+            stopPrice (float, optional): [Used with STOP/STOP_MARKET or TAKE_PROFIT/TAKE_PROFIT_MARKET orders.]
+            closePosition (bool, optional): [true, false；Close-All，used with STOP_MARKET or TAKE_PROFIT_MARKET.]. Defaults to False.
+            activationPrice (float, optional): [Used with TRAILING_STOP_MARKET orders, default as the latest price(supporting different workingType)]
+            callbackRate (float, optional): [Used with TRAILING_STOP_MARKET orders, min 0.1, max 5 where 1 for 1%]
+            workingType (str, optional): [stopPrice triggered by: "MARK_PRICE", "CONTRACT_PRICE". Default "CONTRACT_PRICE"]
+            priceProtect (bool, optional): ["TRUE" or "FALSE", default "FALSE". Used with STOP/STOP_MARKET or TAKE_PROFIT/TAKE_PROFIT_MARKET orders.]. Defaults to False.
+            newOrderRespType (bool, optional): [False == "ACK", True == "RESULT", default "ACK"]. Defaults to False.
 
-    #         Type	Additional mandatory parameters
-    #         LIMIT	timeInForce, quantity, price
-    #         MARKET	quantity
-    #         STOP/TAKE_PROFIT	quantity, price, stopPrice
-    #         STOP_MARKET/TAKE_PROFIT_MARKET	stopPrice
-    #         TRAILING_STOP_MARKET	callbackRate
-    #     """
-    #     if symbol is None or quantity is None: raise PyNanceException("Asset and quantity are required")
-    #     if order_type.upper() not in ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']:
-    #         raise PyNanceException("order_type has to be one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']")
+        Returns:
+            [Response Object]: [PyNance response object]
+        """
+        endpoint = "https://fapi.binance.com/fapi/v1/order"
+        if symbol is None: raise PyNanceException("Symbol is required")
+
+        if market_type is None: raise PyNanceException("Market Type is required")
+        if market_type not in ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']:
+            raise PyNanceException("Market type has to be one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']")
+        _filter = {'symbol': symbol, 'type': market_type}
+
+        if position is not None and position.upper() not in ['BOTH', 'LONG', 'SHORT']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
+        if position is not None: _filter['positionSide'] = position.upper()
+
+        if timeInForce is not None and timeInForce.upper() not in ['GTC', 'IOC', 'FOK', 'GTX']: raise PyNanceException("timeInForce needs to be one of the following: ['GTC', 'IOC', 'FOK', 'GTX']")
+        if timeInForce is not None: _filter['timeInForce'] = timeInForce.upper()
+
+        if not closePosition and quantity is not None: _filter['quantity'] = quantity
+        elif closePosition: _filter['closePosition'] = closePosition
+
+        if reduceOnly: _filter['reduceOnly'] = reduceOnly
         
+        if market_type in ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET'] and stopPrice is None:
+            raise PyNanceException("stopPrice is required when using the following markets: ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET']")
+        if stopPrice is not None: _filter['stopPrice'] = stopPrice
+
+        if market_type in ['TRAILING_STOP_MARKET'] and activationPrice is None:
+            raise PyNanceException("activationPrice is required when using the following markets: ['TRAILING_STOP_MARKET']")
+        if activationPrice is not None: _filter['activationPrice'] = activationPrice
+
+        if market_type in ['TRAILING_STOP_MARKET'] and callbackRate is None:
+            raise PyNanceException("callbackRate is required when using the following markets: ['TRAILING_STOP_MARKET']. Min 0.1 max 5 where 1 == 1%")
+        if callbackRate is not None and callbackRate >= 0.01 and callbackRate <= 5: _filter['callbackRate'] = callbackRate
+        else: raise PyNanceException('callbackRate has to be between 0.01 and 5')
         
-    #     endpoint = "https://fapi.binance.com/fapi/v1/openOrders"
-    #     data = self.client._post(
-    #         endpoint,
-    #         True,
-    #         data={
-    #             'symbol': symbol,
-    #             'quantity': quantity
-    #         }
-    #     )
-    #     self.client.logger.info(f'Weight: {data.info["weight"]}')
-    #     return data
+        if workingType is not None and workingType.upper() not in ['MARK_PRICE', 'CONTRACT_PRICE']: raise PyNanceException("stopPrice triggered by: 'MARK_PRICE', 'CONTRACT_PRICE'. Default 'CONTRACT_PRICE'")
+        if workingType is not None and workingType != "CONTRACT_PRICE": _filter['workingType'] = workingType.upper()
+
+        if market_type in ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET'] and priceProtect:
+            _filter['priceProtect'] = "TRUE"
+
+        if newOrderRespType: _filter['newOrderRespType'] = "RESULT"
+
+        data = self.client._post(endpoint, True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
