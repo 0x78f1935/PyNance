@@ -30,7 +30,8 @@ class Orders(object):
     def create(self, 
         symbol:str=None, 
         market_type:str=None, 
-        quantity:float=None, 
+        side:str=None,
+        quantity:float=None,
         position:str=None, 
         timeInForce:str=None,
         reduceOnly:bool=False,
@@ -48,6 +49,7 @@ class Orders(object):
         Args:
             symbol (str, required): [Target symbol].
             market_type (str, required): [Market Type, one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']]
+            side (str, required): [BUY, SELL].
             quantity (float, optional): [Cannot be sent with closePosition=true(Close-All)]
             position (str, optional): [Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.]. Defaults to BOTH.
             timeInForce (str, optional): [
@@ -77,7 +79,11 @@ class Orders(object):
             raise PyNanceException("Market type has to be one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']")
         _filter = {'symbol': symbol, 'type': market_type}
 
-        if position is not None and position.upper() not in ['BOTH', 'BUY/LONG', 'SELL/SHORT', 'LONG', 'SHORT', 'BUY', 'SELL']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
+        if side is None: raise PyNanceException("Side is required")
+        if side is not None and side.upper() not in ['BUY', 'SELL']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
+        if side is not None: _filter['side'] = side.upper()
+
+        if position is not None and position.upper() not in ['BOTH', 'LONG', 'SHORT']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
         if position is not None: _filter['positionSide'] = position.upper()
 
         if timeInForce is not None and timeInForce.upper() not in ['GTC', 'IOC', 'FOK', 'GTX']: raise PyNanceException("timeInForce needs to be one of the following: ['GTC', 'IOC', 'FOK', 'GTX']")
