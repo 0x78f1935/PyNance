@@ -80,7 +80,7 @@ class Orders(object):
         _filter = {'symbol': symbol, 'type': market_type}
 
         if side is None: raise PyNanceException("Side is required")
-        if side is not None and side.upper() not in ['BUY', 'SELL']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
+        if side is not None and side.upper() not in ['BUY', 'SELL']: raise PyNanceException("SIDE has to be either BUY or SELL.")
         if side is not None: _filter['side'] = side.upper()
 
         if position is not None and position.upper() not in ['BOTH', 'LONG', 'SHORT']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
