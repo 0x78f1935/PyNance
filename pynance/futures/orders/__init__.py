@@ -99,8 +99,6 @@ class Orders(object):
             raise PyNanceException("stopPrice is required when using the following markets: ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET']")
         if stopPrice is not None: _filter['stopPrice'] = float(stopPrice)
 
-        if market_type in ['TRAILING_STOP_MARKET'] and activationPrice is None:
-            raise PyNanceException("activationPrice is required when using the following markets: ['TRAILING_STOP_MARKET']")
         if activationPrice is not None: _filter['activationPrice'] = float(activationPrice)
 
         if market_type in ['TRAILING_STOP_MARKET'] and callbackRate is None:
