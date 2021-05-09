@@ -152,7 +152,7 @@ class Assets(object):
         if timeframe not in ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']: 
             raise PyNanceException("Timeframe is unknown, use one of the following timeframes: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']")
         if total_candles <= 0 or total_candles > 1000: raise PyNanceException("Total amount of candles needs to be between 1 and 1000")
-        endpoint = "https://fapi.binance.com/fapi/v1/lvtKlines"
+        endpoint = "https://fapi.binance.com/fapi/v1/klines"
         data = self.client._get(
             endpoint,
             False, 
@@ -164,7 +164,7 @@ class Assets(object):
         )
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         klines = data.json
-        if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
+        if len(klines) >= 1: klines = [[float(o) for o in i if type(o) in [int, float]] for i in klines]
         return klines
 
     def volume(self, symbol:str="BTCUSDT", period:str="1h", limit:int=30):
