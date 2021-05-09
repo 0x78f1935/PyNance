@@ -1,4 +1,5 @@
 from pynance.core.exceptions import PyNanceException
+import time
 
 
 class Orders(object):
@@ -75,13 +76,13 @@ class Orders(object):
         if symbol is None: raise PyNanceException("Symbol is required")
 
         if market_type is None: raise PyNanceException("Market Type is required")
-        if market_type not in ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']:
+        if market_type.upper() not in ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']:
             raise PyNanceException("Market type has to be one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']")
-        _filter = {'symbol': symbol, 'type': market_type}
 
         if side is None: raise PyNanceException("Side is required")
         if side is not None and side.upper() not in ['BUY', 'SELL']: raise PyNanceException("SIDE has to be either BUY or SELL.")
-        if side is not None: _filter['side'] = side.upper()
+
+        _filter = {'symbol': symbol, 'type': market_type.upper(), 'side': side.upper()}
 
         if position is not None and position.upper() not in ['BOTH', 'LONG', 'SHORT']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
         if position is not None: _filter['positionSide'] = position.upper()
@@ -89,23 +90,23 @@ class Orders(object):
         if timeInForce is not None and timeInForce.upper() not in ['GTC', 'IOC', 'FOK', 'GTX']: raise PyNanceException("timeInForce needs to be one of the following: ['GTC', 'IOC', 'FOK', 'GTX']")
         if timeInForce is not None: _filter['timeInForce'] = timeInForce.upper()
 
-        if not closePosition and quantity is not None: _filter['quantity'] = quantity
+        if not closePosition and quantity is not None: _filter['quantity'] = float(quantity)
         elif closePosition: _filter['closePosition'] = closePosition
 
         if reduceOnly: _filter['reduceOnly'] = reduceOnly
         
         if market_type in ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET'] and stopPrice is None:
             raise PyNanceException("stopPrice is required when using the following markets: ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET']")
-        if stopPrice is not None: _filter['stopPrice'] = stopPrice
+        if stopPrice is not None: _filter['stopPrice'] = float(stopPrice)
 
         if market_type in ['TRAILING_STOP_MARKET'] and activationPrice is None:
             raise PyNanceException("activationPrice is required when using the following markets: ['TRAILING_STOP_MARKET']")
-        if activationPrice is not None: _filter['activationPrice'] = activationPrice
+        if activationPrice is not None: _filter['activationPrice'] = float(activationPrice)
 
         if market_type in ['TRAILING_STOP_MARKET'] and callbackRate is None:
             raise PyNanceException("callbackRate is required when using the following markets: ['TRAILING_STOP_MARKET']. Min 0.1 max 5 where 1 == 1%")
-        if callbackRate is not None and callbackRate >= 0.01 and callbackRate <= 5: _filter['callbackRate'] = callbackRate
-        else: raise PyNanceException('callbackRate has to be between 0.01 and 5')
+        if market_type in ['TRAILING_STOP_MARKET'] and callbackRate is not None and callbackRate >= 0.01 and callbackRate <= 5: _filter['callbackRate'] = float(callbackRate)
+        elif market_type in ['TRAILING_STOP_MARKET'] and callbackRate is None: raise PyNanceException('callbackRate has to be between 0.01 and 5')
         
         if workingType is not None and workingType.upper() not in ['MARK_PRICE', 'CONTRACT_PRICE']: raise PyNanceException("stopPrice triggered by: 'MARK_PRICE', 'CONTRACT_PRICE'. Default 'CONTRACT_PRICE'")
         if workingType is not None and workingType != "CONTRACT_PRICE": _filter['workingType'] = workingType.upper()
@@ -115,6 +116,6 @@ class Orders(object):
 
         if newOrderRespType: _filter['newOrderRespType'] = "RESULT"
 
-        data = self.client._post(endpoint=endpoint, signed=True, force_params=True, data=_filter)
+        data = self.client._post(endpoint=endpoint, signed=True, force_params=False, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data

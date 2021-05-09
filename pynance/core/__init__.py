@@ -94,14 +94,19 @@ class Core(requests.Session):
     def _order(self, data:dict):
         """Orders the data so Binance accepts the request"""
         has_signature = False
+        has_timestamp = False
         params = []
         for key, value in data.items():
             if key == 'signature':
                 has_signature = True
+            elif key == 'timestamp':
+                has_timestamp = True
             else:
                 params.append((key, value))
         # sort parameters by key
         params.sort(key=itemgetter(0))
+        if has_timestamp:
+            params.append(('timestamp', data['timestamp']))
         if has_signature:
             params.append(('signature', data['signature']))
         return params
