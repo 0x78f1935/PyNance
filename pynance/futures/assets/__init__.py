@@ -164,7 +164,7 @@ class Assets(object):
         )
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         klines = data.json
-        if len(klines) >= 1: klines = [[float(o) for o in i if type(o) in [int, float]] for i in klines]
+        if len(klines) >= 1: klines = [[float(o) for o in i] for i in klines]
         return klines
 
     def volume(self, symbol:str="BTCUSDT", period:str="1h", limit:int=30):
