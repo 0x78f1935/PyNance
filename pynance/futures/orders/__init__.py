@@ -77,7 +77,7 @@ class Orders(object):
             raise PyNanceException("Market type has to be one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']")
         _filter = {'symbol': symbol, 'type': market_type}
 
-        if position is not None and position.upper() not in ['BOTH', 'BUY/LONG', 'SELL/SHORT', 'LONG', 'SHORT']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
+        if position is not None and position.upper() not in ['BOTH', 'BUY/LONG', 'SELL/SHORT', 'LONG', 'SHORT', 'BUY', 'SELL']: raise PyNanceException("Default BOTH for One-way Mode ; LONG or SHORT for Hedge Mode. It must be sent in Hedge Mode.")
         if position is not None: _filter['positionSide'] = position.upper()
 
         if timeInForce is not None and timeInForce.upper() not in ['GTC', 'IOC', 'FOK', 'GTX']: raise PyNanceException("timeInForce needs to be one of the following: ['GTC', 'IOC', 'FOK', 'GTX']")
@@ -109,6 +109,6 @@ class Orders(object):
 
         if newOrderRespType: _filter['newOrderRespType'] = "RESULT"
 
-        data = self.client._post(endpoint, True, data=_filter)
+        data = self.client._post(endpoint=endpoint, signed=True, force_params=True, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
