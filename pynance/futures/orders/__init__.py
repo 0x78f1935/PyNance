@@ -87,7 +87,7 @@ class Orders(object):
             raise PyNanceException("Market type has to be one of the following: ['LIMIT', 'MARKET', 'STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET', 'TRAILING_STOP_MARKET']")
 
         if side is None: raise PyNanceException("Side is required")
-        if side is not None and side.upper() not in ['BUY', 'SELL']: raise PyNanceException("SIDE has to be either BUY or SELL.")
+        if side is not None and side.upper() not in ['BUY', 'SELL', 'BOTH']: raise PyNanceException("SIDE has to be either BUY or SELL.")
 
         _filter = {'symbol': symbol, 'type': market_type.upper(), 'side': side.upper()}
 
