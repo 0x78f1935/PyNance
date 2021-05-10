@@ -9,6 +9,7 @@ class Response(object):
             'endpoint': response.url.split('?').pop(0),
             'method': response.request.method
         }
+        self.code = 200
         # Extend reason message based on response status code
         if response.status_code == 403: self.response_info['reason'] += ', HTTP 403 return code is used when the WAF Limit (Web Application Firewall) has been violated.'
         elif response.status_code == 429: self.response_info['reason'] += ', HTTP 429 return code is used when breaking a request rate limit.'
