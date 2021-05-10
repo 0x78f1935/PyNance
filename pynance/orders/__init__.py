@@ -4,21 +4,8 @@ from uuid import uuid4
 class Orders(object):
     def __init__(self, client):
         self.client = client
-    
-    def open(self, asset=None):
-        """Retrieves a collection of all open orders
 
-        Example
-            client.orders.open() # or
-            client.orders.open('LTCBTC')
-        """
-        if asset is None: _filter = {}
-        else: _filter = {'symbol': asset}
-        data = self.client._get('/api/v3/openOrders', True, data=_filter)
-        self.client.logger.info(f'Weight: {data.info["weight"]}')
-        return data
-
-    def open(self, symbol=None, order_id=None):
+    def open(self, symbol:str=None, order_id:str=None, force_order:bool=False):
         """Retrieves a collection of all open orders
 
         Warning
@@ -29,7 +16,7 @@ class Orders(object):
             client.orders.open('LTCBTC')
         """
         if symbol is None: raise PyNanceException("Symbol is required")
-        if order_id is None:
+        if order_id is None and not force_order:
             endpoint = "/api/v3/openOrders"
             if symbol is None: _filter = {}
             else: _filter = {'symbol': symbol}
