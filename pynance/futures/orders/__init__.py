@@ -11,7 +11,7 @@ class Orders(object):
     def __init__(self, client):
         self.client = client
 
-    def open(self, symbol=None):
+    def open(self, symbol=None, order_id=None):
         """Retrieves a collection of all open orders
 
         Warning
@@ -21,9 +21,15 @@ class Orders(object):
             client.orders.open() # or
             client.orders.open('LTCBTC')
         """
-        endpoint = "https://fapi.binance.com/fapi/v1/openOrders"
-        if symbol is None: _filter = {}
-        else: _filter = {'symbol': symbol}
+        if symbol is None: raise PyNanceException("Symbol is required")
+        if order_id is None:
+            endpoint = "https://fapi.binance.com/fapi/v1/openOrders"
+            if symbol is None: _filter = {}
+            else: _filter = {'symbol': symbol}
+        else:
+            endpoint = "https://fapi.binance.com/fapi/v1/order"
+            if symbol is None: _filter = {}
+            else: _filter = {'symbol': symbol, 'origClientOrderId': order_id, 'limit': 1}
         data = self.client._get(endpoint, True, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data

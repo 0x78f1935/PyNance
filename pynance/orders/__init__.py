@@ -18,6 +18,29 @@ class Orders(object):
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
+    def open(self, symbol=None, order_id=None):
+        """Retrieves a collection of all open orders
+
+        Warning
+        If symbol is None the weight is 40
+
+        Example
+            client.orders.open() # or
+            client.orders.open('LTCBTC')
+        """
+        if symbol is None: raise PyNanceException("Symbol is required")
+        if order_id is None:
+            endpoint = "/api/v3/openOrders"
+            if symbol is None: _filter = {}
+            else: _filter = {'symbol': symbol}
+        else:
+            endpoint = "/api/v3/order"
+            if symbol is None: _filter = {}
+            else: _filter = {'symbol': symbol, 'origClientOrderId': order_id, 'limit': 1}
+        data = self.client._get(endpoint, True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
+
     def create(self, asset=None, quantity=None, buy=True, stop_price=None, test=False, order_id=str(uuid4())):
         """This method is able to create different kind of buy/sell order on market value.
         Stop limit / take profit is supported if the stop_price is provided.
