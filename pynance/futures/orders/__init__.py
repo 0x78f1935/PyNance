@@ -29,7 +29,8 @@ class Orders(object):
         else:
             endpoint = "https://fapi.binance.com/fapi/v1/order"
             if symbol is None: _filter = {}
-            else: _filter = {'symbol': symbol, 'origClientOrderId': order_id, 'limit': 1}
+            else: _filter = {'symbol': symbol, 'limit': 1}
+            if order_id is not None: _filter['origClientOrderId'] = order_id
         data = self.client._get(endpoint, True, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
