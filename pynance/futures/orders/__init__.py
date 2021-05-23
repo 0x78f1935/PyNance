@@ -44,6 +44,19 @@ class Orders(object):
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
+    def open_position(self, symbol:str=None):
+        """Get current position information.
+
+        Args:
+            symbol (str, required): [description]. Defaults to None.
+        """
+        if symbol is None: raise PyNanceException("Symbol is required")
+        endpoint = "https://fapi.binance.com/fapi/v2/positionRisk"
+        _filter = {'symbol': symbol}
+        data = self.client._delete(endpoint, True, data=_filter)
+        self.client.logger.info(f'Weight: {data.info["weight"]}')
+        return data
+
     def open(self, symbol:str=None, order_id:str=None, force_order:bool=False):
         """Retrieves a collection of all open orders
 
