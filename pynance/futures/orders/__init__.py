@@ -24,11 +24,13 @@ class Orders(object):
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
 
-    def cancel_by_order_id(self, symbol:str=None, client_order_id:str=None):
+    def cancel_by_order_id(self, symbol:str=None, order_id:int=None, client_order_id:str=None):
         if symbol is None: raise PyNanceException("Symbol is required")
-        if client_order_id is None: raise PyNanceException("order_id is required")
+        if order_id is None and client_order_id is None: raise PyNanceException("order_id or client_order_id is required, atleast one")
         endpoint = "https://fapi.binance.com/fapi/v1/order"
-        _filter = {'symbol': symbol, 'origClientOrderId':client_order_id}
+        _filter = {'symbol': symbol}
+        if order_id is not None: _filter['orderId'] = order_id
+        if client_order_id is not None: _filter['origClientOrderId'] = client_order_id
         data = self.client._delete(endpoint, True, data=_filter)
         self.client.logger.info(f'Weight: {data.info["weight"]}')
         return data
