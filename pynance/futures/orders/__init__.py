@@ -25,6 +25,15 @@ class Orders(object):
         return data
 
     def cancel_by_order_id(self, symbol:str=None, order_id:int=None, client_order_id:str=None):
+        """Cancel order by order ID or client_order_id
+
+        Args:
+            symbol (str, required): [description]. Defaults to None.
+            order_id (int, required if client_order_id is None): [description]. Defaults to None.
+            client_order_id (str, required if order_id is None): [description]. Defaults to None.
+
+        Note: order_id and client_order_id can be used at the same time
+        """
         if symbol is None: raise PyNanceException("Symbol is required")
         if order_id is None and client_order_id is None: raise PyNanceException("order_id or client_order_id is required, atleast one")
         endpoint = "https://fapi.binance.com/fapi/v1/order"
