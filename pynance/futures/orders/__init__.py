@@ -101,7 +101,9 @@ class Orders(object):
         elif closePosition: _filter['closePosition'] = closePosition
 
         if reduceOnly: _filter['reduceOnly'] = reduceOnly
-
+        
+        if market_type in ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET'] and stopPrice is None:
+            raise PyNanceException("stopPrice is required when using the following markets: ['STOP', 'STOP_MARKET', 'TAKE_PROFIT', 'TAKE_PROFIT_MARKET']")
         if stopPrice is not None: _filter['stopPrice'] = float(stopPrice)
 
         if activationPrice is not None: _filter['activationPrice'] = float(activationPrice)
