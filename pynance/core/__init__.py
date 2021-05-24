@@ -47,7 +47,6 @@ class Core(requests.Session):
             request_params ([tuple], optional): [When set, force the parameters in the endpoint as args].
             timeout (int, optional): [The time in seconds until the request will timeout]. Defaults to 10.
         """
-        self._reset_pool()
         if 'binance.com' not in endpoint: 
             self.logger.warning(f'Endpoint seems to be without base url ... {endpoint} ... applying base url ...')
             endpoint = self.api_endpoint + endpoint
@@ -120,6 +119,7 @@ class Core(requests.Session):
     def _handle_response(self, resp):
         resp = Response(resp)
         self.close() # Close the response
+        self._reset_pool()
         self.logger.info(f'Request ... {resp.response_info["endpoint"]} ... Done with status code {resp.response_info["status_code"]}!')
         return resp
 
